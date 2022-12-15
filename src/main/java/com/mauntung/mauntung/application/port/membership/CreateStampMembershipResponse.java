@@ -15,6 +15,7 @@ public class CreateStampMembershipResponse {
         errorResponse = new ErrorResponse(message);
     }
 
+    @Getter
     @RequiredArgsConstructor
     public static class SuccessResponse {
         private final long id;
@@ -26,7 +27,7 @@ public class CreateStampMembershipResponse {
 
     @Getter
     @RequiredArgsConstructor
-    private static class ErrorResponse {
+    public static class ErrorResponse {
         private final String message;
     }
 }
