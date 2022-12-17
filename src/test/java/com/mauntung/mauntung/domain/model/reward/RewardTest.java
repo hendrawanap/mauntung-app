@@ -1,8 +1,5 @@
-package com.mauntung.mauntung.domain.model.redeem.reward;
+package com.mauntung.mauntung.domain.model.reward;
 
-import com.mauntung.mauntung.domain.model.reward.Reward;
-import com.mauntung.mauntung.domain.model.reward.RewardFactory;
-import com.mauntung.mauntung.domain.model.reward.RewardFactoryImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
