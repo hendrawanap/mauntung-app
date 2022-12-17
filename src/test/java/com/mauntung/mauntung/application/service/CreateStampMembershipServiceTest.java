@@ -5,7 +5,6 @@ import com.mauntung.mauntung.application.port.membership.CreateStampMembershipRe
 import com.mauntung.mauntung.application.port.membership.MembershipRepository;
 import com.mauntung.mauntung.application.port.merchant.MerchantRepository;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
-import com.mauntung.mauntung.domain.model.membership.Membership;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import org.junit.jupiter.api.Test;
@@ -75,7 +74,7 @@ class CreateStampMembershipServiceTest {
 
         when(merchantRepository.findByUserId(userId)).thenReturn(Optional.of(mock(Merchant.class)));
         when(rewardRepository.findAllById(rewardIds)).thenReturn(rewards);
-        when(membershipRepository.save(mock(Membership.class))).thenReturn(Optional.empty());
+        when(membershipRepository.save(any())).thenReturn(Optional.empty());
 
         CreateStampMembershipCommand command = new CreateStampMembershipCommand("name", userId, rewardIds, 10, 10, 10);
         CreateStampMembershipService service = new CreateStampMembershipService(merchantRepository, rewardRepository, membershipRepository);
