@@ -82,7 +82,7 @@ public class MerchantRegisterService implements MerchantRegisterUseCase {
     }
 
     private User createUser(String email, String password) throws IllegalArgumentException {
-        return userFactory.createWithoutId(email, passwordEncoder.encode(password), new Date());
+        return userFactory.createWithoutId(email, passwordEncoder.encode(password), User.Role.MERCHANT, new Date());
     }
 
     private Merchant createMerchant(String merchantName) throws IllegalArgumentException {

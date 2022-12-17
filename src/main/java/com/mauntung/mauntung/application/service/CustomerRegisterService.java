@@ -80,7 +80,7 @@ public class CustomerRegisterService implements CustomerRegisterUseCase {
     }
 
     private User createUser(String email, String password) throws IllegalArgumentException {
-        return userFactory.createWithoutId(email, passwordEncoder.encode(password), new Date());
+        return userFactory.createWithoutId(email, passwordEncoder.encode(password), User.Role.CUSTOMER, new Date());
     }
 
     private Customer createCustomer(String fullName) throws IllegalArgumentException {

@@ -17,6 +17,7 @@ class UserFactoryImplTest {
     static String password = "password";
     static Date createdAt = new Date();
     static Long id = 1L;
+    static String role = User.Role.MERCHANT;
 
     @BeforeEach
     void setUp() {
@@ -29,23 +30,23 @@ class UserFactoryImplTest {
     @ParameterizedTest
     @MethodSource("malformedEmailsProvider")
     void givenMalformedEmail_createWithoutId_shouldThrowException(String malformedEmail) {
-        assertThrows(IllegalStateException.class, () -> userFactory.createWithoutId(malformedEmail, password, createdAt));
+        assertThrows(IllegalStateException.class, () -> userFactory.createWithoutId(malformedEmail, password, role, createdAt));
     }
 
     @ParameterizedTest
     @MethodSource("malformedEmailsProvider")
     void givenMalformedEmail_createWithId_shouldThrowException(String malformedEmail) {
-        assertThrows(IllegalStateException.class, () -> userFactory.createWithId(malformedEmail, password, createdAt, id));
+        assertThrows(IllegalStateException.class, () -> userFactory.createWithId(malformedEmail, password, role, createdAt, id));
     }
 
     @Test
     void givenWellFormedEmail_createWithoutId_ShouldNotThrowException() {
-        assertDoesNotThrow(() -> userFactory.createWithoutId(wellFormedEmail, password, createdAt));
+        assertDoesNotThrow(() -> userFactory.createWithoutId(wellFormedEmail, password, role, createdAt));
     }
 
     @Test
     void givenWellFormedEmail_createWithId_ShouldNotThrowException() {
-        assertDoesNotThrow(() -> userFactory.createWithId(wellFormedEmail, password, createdAt, id));
+        assertDoesNotThrow(() -> userFactory.createWithId(wellFormedEmail, password, role, createdAt, id));
     }
 
     static Stream<String> malformedEmailsProvider() {
