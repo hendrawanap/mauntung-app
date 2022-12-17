@@ -25,6 +25,8 @@ public class MerchantRegisterService implements MerchantRegisterUseCase {
     private final UserRepository userRepository;
     private final MerchantRepository merchantRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final UserFactory userFactory = new UserFactoryImpl();
+    private final MerchantFactory merchantFactory = new MerchantFactoryImpl();
 
     @Override
     public MerchantRegisterResponse apply(MerchantRegisterCommand command) {
@@ -80,12 +82,10 @@ public class MerchantRegisterService implements MerchantRegisterUseCase {
     }
 
     private User createUser(String email, String password) throws IllegalArgumentException {
-        UserFactory userFactory = new UserFactoryImpl();
         return userFactory.createWithoutId(email, passwordEncoder.encode(password), new Date());
     }
 
     private Merchant createMerchant(String merchantName) throws IllegalArgumentException {
-        MerchantFactory merchantFactory = new MerchantFactoryImpl();
         return merchantFactory.builder(merchantName, new Date()).build();
     }
 }
