@@ -9,4 +9,6 @@ public interface TierRepository {
     Optional<Long> save(Tier tier);
 
     Set<Tier> findAllById(Set<Long> ids);
+
+    void attachToMembership(Set<Tier> tiers, Long membershipId);
 }

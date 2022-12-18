@@ -40,7 +40,8 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
         }
 
         Set<Tier> tiers = null;
-        if (command.getTierIds() != null) {
+        boolean withTiers = command.getTierIds() != null;
+        if (withTiers) {
             tiers = tierRepository.findAllById(command.getTierIds());
 
             if (tiers.size() != command.getTierIds().size()) {
@@ -64,6 +65,8 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
         }
 
         rewardRepository.attachToMembership(rewards, membershipId.get());
+
+        if (withTiers) tierRepository.attachToMembership(tiers, membershipId.get());
 
         response.setSuccessResponse(new CreatePointMembershipResponse.SuccessResponse(
             membershipId.get(),
