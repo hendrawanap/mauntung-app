@@ -61,7 +61,7 @@ public class CustomerRegisterService implements CustomerRegisterUseCase {
             return response;
         }
 
-        Optional<Long> customerId = customerRepository.save(newCustomer);
+        Optional<Long> customerId = customerRepository.save(newCustomer, userId.get());
         if (customerId.isEmpty()) {
             response.setErrorResponse("Failed to create customer");
             return response;

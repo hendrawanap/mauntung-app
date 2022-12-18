@@ -8,4 +8,6 @@ public interface CustomerRepository {
     Optional<Customer> findByUserId(long userId);
 
     Optional<Long> save(Customer customer);
+
+    Optional<Long> save(Customer customer, Long userId);
 }

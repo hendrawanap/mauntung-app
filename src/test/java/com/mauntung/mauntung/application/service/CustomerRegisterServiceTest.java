@@ -53,7 +53,7 @@ class CustomerRegisterServiceTest {
         when(userRepository.save(any())).thenReturn(Optional.of(userId));
 
         CustomerRepository customerRepository = mock(CustomerRepository.class);
-        when(customerRepository.save(any())).thenReturn(Optional.of(customerId));
+        when(customerRepository.save(any(), any())).thenReturn(Optional.of(customerId));
 
         // Testing start
         CustomerRegisterService service = new CustomerRegisterService(userRepository, customerRepository);
