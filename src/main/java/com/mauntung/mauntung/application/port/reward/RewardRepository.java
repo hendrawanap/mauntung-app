@@ -9,4 +9,6 @@ public interface RewardRepository {
     Optional<Long> save(Reward reward);
 
     Set<Reward> findAllById(Set<Long> ids);
+
+    void attachToMembership(Set<Reward> rewards, Long membershipId);
 }

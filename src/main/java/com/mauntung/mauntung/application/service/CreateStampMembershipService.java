@@ -57,6 +57,8 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
             return response;
         }
 
+        rewardRepository.attachToMembership(rewards, membershipId.get());
+
         response.setSuccessResponse(new CreateStampMembershipResponse.SuccessResponse(
             membershipId.get(),
             membership.getName(),

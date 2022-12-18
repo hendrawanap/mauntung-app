@@ -63,6 +63,8 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
             return response;
         }
 
+        rewardRepository.attachToMembership(rewards, membershipId.get());
+
         response.setSuccessResponse(new CreatePointMembershipResponse.SuccessResponse(
             membershipId.get(),
             membership.getName(),
