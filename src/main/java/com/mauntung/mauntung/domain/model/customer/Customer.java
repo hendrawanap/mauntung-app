@@ -18,6 +18,12 @@ public class Customer {
     private final String phone;
     private final UUID code;
     private final Date birthDate;
+    private final Gender gender;
     private final Set<CustomerMembership> customerMemberships;
     private final Date createdAt;
+
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
 }

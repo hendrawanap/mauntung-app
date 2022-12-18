@@ -21,13 +21,14 @@ public class CustomerFactoryImpl implements CustomerFactory {
         private String phone;
         private final UUID code;
         private Date birthDate;
+        private Customer.Gender gender;
         private Set<CustomerMembership> customerMemberships;
         private final Date createdAt;
 
         @Override
         public Customer build() throws IllegalArgumentException {
             validate();
-            return new Customer(id, name, phone, code, birthDate, customerMemberships, createdAt);
+            return new Customer(id, name, phone, code, birthDate, gender, customerMemberships, createdAt);
         }
 
         @Override
@@ -45,6 +46,12 @@ public class CustomerFactoryImpl implements CustomerFactory {
         @Override
         public CustomerBuilder birthDate(Date birthDate) {
             this.birthDate = birthDate;
+            return this;
+        }
+
+        @Override
+        public CustomerBuilder gender(Customer.Gender gender) {
+            this.gender = gender;
             return this;
         }
 

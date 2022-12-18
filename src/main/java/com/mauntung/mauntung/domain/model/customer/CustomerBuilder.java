@@ -14,5 +14,7 @@ public interface CustomerBuilder {
 
     CustomerBuilder birthDate(Date birthDate);
 
+    CustomerBuilder gender(Customer.Gender gender);
+
     CustomerBuilder memberships(Set<CustomerMembership> customerMemberships);
 }
