@@ -28,7 +28,7 @@ public class MerchantRepositoryImpl implements MerchantRepository {
         } catch (IllegalArgumentException ex) {
             return Optional.empty();
         }
-        return Optional.of(mapper.entityToModel(entity).getId());
+        return Optional.of(entity.getId());
     }
 
     @Override
@@ -39,6 +39,6 @@ public class MerchantRepositoryImpl implements MerchantRepository {
         } catch (IllegalArgumentException ex) {
             return Optional.empty();
         }
-        return Optional.of(mapper.entityToModel(entity).getId());
+        return Optional.of(entity.getId());
     }
 }
