@@ -54,7 +54,7 @@ class MerchantRegisterServiceTest {
         when(userRepository.save(any())).thenReturn(Optional.of(userId));
 
         MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        when(merchantRepository.save(any())).thenReturn(Optional.of(merchantId));
+        when(merchantRepository.save(any(), any())).thenReturn(Optional.of(merchantId));
 
         // Testing start
         MerchantRegisterUseCase merchantRegisterService = new MerchantRegisterService(userRepository, merchantRepository);

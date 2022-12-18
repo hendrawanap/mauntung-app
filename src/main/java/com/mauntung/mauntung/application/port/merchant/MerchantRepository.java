@@ -8,4 +8,6 @@ public interface MerchantRepository {
     Optional<Merchant> findByUserId(Long userId);
 
     Optional<Long> save(Merchant merchant);
+
+    Optional<Long> save(Merchant merchant, Long userId);
 }

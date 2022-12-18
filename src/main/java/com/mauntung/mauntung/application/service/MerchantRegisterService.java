@@ -60,7 +60,7 @@ public class MerchantRegisterService implements MerchantRegisterUseCase {
             return response;
         }
 
-        Optional<Long> merchantId = merchantRepository.save(newMerchant);
+        Optional<Long> merchantId = merchantRepository.save(newMerchant, userId.get());
         if (merchantId.isEmpty()) {
             response.setErrorResponse("Failed to create merchant");
             return response;
