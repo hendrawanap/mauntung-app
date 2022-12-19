@@ -1,11 +1,12 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.UserWithSpecifiedEmailExistedException;
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterCommand;
-import com.mauntung.mauntung.application.port.customer.CustomerRegisterResponse;
 import com.mauntung.mauntung.application.port.customer.CustomerRepository;
 import com.mauntung.mauntung.application.port.user.UserRepository;
 import com.mauntung.mauntung.domain.model.customer.Customer;
 import com.mauntung.mauntung.domain.model.user.User;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -14,53 +15,47 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CustomerRegisterServiceTest {
+    private static UserRepository userRepository;
+    private static CustomerRepository customerRepository;
+    private static User user;
+    private static Customer customer;
+    private static String email;
+    private static String password;
+    private static String fullName;
+
+    @BeforeAll
+    static void beforeAll() {
+        userRepository = mock(UserRepository.class);
+        customerRepository = mock(CustomerRepository.class);
+        user = mock(User.class);
+        customer = mock(Customer.class);
+        email = "customer1@mail.com";
+        password = "password123";
+        fullName = "Bambang";
+    }
     @Test
-    void givenExistedEmail_apply_shouldReturnFailedResponse() {
-        String email = "customer1@mail.com";
-        String password = "password123";
-        String fullName = "Bambang";
-
-        User user = mock(User.class);
-
-        UserRepository userRepository = mock(UserRepository.class);
+    void givenExistedEmail_apply_shouldThrowsException() {
         when(userRepository.findByEmail(email)).thenReturn(Optional.of(user));
 
-        CustomerRepository customerRepository = mock(CustomerRepository.class);
-
-        // Testing start
         CustomerRegisterService service = new CustomerRegisterService(userRepository, customerRepository);
         CustomerRegisterCommand command = new CustomerRegisterCommand(email, password, fullName);
-        CustomerRegisterResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(UserWithSpecifiedEmailExistedException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenNonExistedEmail_apply_shouldReturnSuccessResponse() {
-        String email = "customer1@mail.com";
-        String password = "password123";
-        String fullName = "Bambang";
-
+    void givenNonExistedEmail_apply_shouldReturnResponse() {
         long userId = 1;
-
-        Customer customer = mock(Customer.class);
         long customerId = 1;
-        when(customer.getName()).thenReturn(fullName);
 
-        UserRepository userRepository = mock(UserRepository.class);
+        when(customer.getName()).thenReturn(fullName);
         when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
         when(userRepository.save(any())).thenReturn(Optional.of(userId));
-
-        CustomerRepository customerRepository = mock(CustomerRepository.class);
         when(customerRepository.save(any(), any())).thenReturn(Optional.of(customerId));
 
-        // Testing start
         CustomerRegisterService service = new CustomerRegisterService(userRepository, customerRepository);
         CustomerRegisterCommand command = new CustomerRegisterCommand(email, password, fullName);
-        CustomerRegisterResponse response = service.apply(command);
 
-        assertNull(response.getErrorResponse());
-        assertNotNull(response.getSuccessResponse());
+        assertNotNull(service.apply(command));
     }
 }

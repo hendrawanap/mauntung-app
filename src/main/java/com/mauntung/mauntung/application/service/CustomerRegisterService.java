@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.UserWithSpecifiedEmailExistedException;
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterCommand;
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterResponse;
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterUseCase;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -31,48 +31,29 @@ public class CustomerRegisterService implements CustomerRegisterUseCase {
 
     @Override
     public CustomerRegisterResponse apply(CustomerRegisterCommand command) {
-        CustomerRegisterResponse response = new CustomerRegisterResponse();
-
         boolean userIsExist = userIsExist(command.getEmail());
-        if (userIsExist) {
-            response.setErrorResponse("User with specified email is already exist");
-            return response;
-        }
+        if (userIsExist)
+            throw new UserWithSpecifiedEmailExistedException();
 
-        User newUser;
-        try {
-            newUser = createUser(command.getEmail(), command.getPassword());
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        User user = createUser(command.getEmail(), command.getPassword());
+        Long userId = saveUserAndGetId(user);
 
-        Optional<Long> userId = userRepository.save(newUser);
-        if (userId.isEmpty()) {
-            response.setErrorResponse("Failed to create user");
-            return response;
-        }
+        Customer customer = createCustomer(command.getFullName());
+        Long customerId = saveCustomerAndGetId(customer, userId);
 
-        Customer newCustomer;
-        try {
-            newCustomer = createCustomer(command.getFullName());
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        return buildResponse(userId, customerId, command.getFullName());
+    }
 
-        Optional<Long> customerId = customerRepository.save(newCustomer, userId.get());
-        if (customerId.isEmpty()) {
-            response.setErrorResponse("Failed to create customer");
-            return response;
-        }
+    private CustomerRegisterResponse buildResponse(long userId, long customerId, String customerFullName) {
+        return new CustomerRegisterResponse(userId, customerId, customerFullName);
+    }
 
-        response.setSuccessResponse(new CustomerRegisterResponse.SuccessResponse(
-            userId.get(),
-            customerId.get(),
-            newCustomer.getName()
-        ));
-        return response;
+    private Long saveCustomerAndGetId(Customer customer, Long userId) {
+        return customerRepository.save(customer, userId).orElseThrow(() -> new RuntimeException("Failed to save customer"));
+    }
+
+    private Long saveUserAndGetId(User user) {
+        return userRepository.save(user).orElseThrow(() -> new RuntimeException("Failed to save user"));
     }
 
     private boolean userIsExist(String email) {
