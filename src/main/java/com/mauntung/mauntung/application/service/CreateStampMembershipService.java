@@ -1,5 +1,7 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.MerchantNotFoundException;
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
 import com.mauntung.mauntung.application.port.membership.CreateStampMembershipCommand;
 import com.mauntung.mauntung.application.port.membership.CreateStampMembershipResponse;
 import com.mauntung.mauntung.application.port.membership.CreateStampMembershipUseCase;
@@ -16,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -29,44 +30,44 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
 
     @Override
     public CreateStampMembershipResponse apply(CreateStampMembershipCommand command) {
-        CreateStampMembershipResponse response = new CreateStampMembershipResponse();
+        Merchant merchant = findMerchantByUserId(command.getUserId());
+        Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
 
-        Optional<Merchant> merchant = merchantRepository.findByUserId(command.getUserId());
-        if (merchant.isEmpty()) {
-            response.setErrorResponse("Merchant not found");
-            return response;
-        }
+        StampMembership membership = buildStampMembership(command, merchant, rewards);
+        Long membershipId = saveMembershipAndGetId(membership);
 
-        Set<Reward> rewards = rewardRepository.findAllById(command.getRewardIds());
-        if (rewards.size() != command.getRewardIds().size()) {
-            response.setErrorResponse("Reward not found");
-            return response;
-        }
+        attachRewardsToMembership(rewards, membershipId);
 
-        StampMembership membership;
-        try {
-            membership = buildStampMembership(command, merchant.get(), rewards);
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        return buildResponse(membershipId, membership);
+    }
 
-        Optional<Long> membershipId = membershipRepository.save(membership);
-        if (membershipId.isEmpty()) {
-            response.setErrorResponse("Can't create stamp membership");
-            return response;
-        }
+    private Merchant findMerchantByUserId(long userId) throws MerchantNotFoundException {
+        return merchantRepository.findByUserId(userId).orElseThrow(MerchantNotFoundException::new);
+    }
 
-        rewardRepository.attachToMembership(rewards, membershipId.get());
+    private Set<Reward> findAllRewardsByIds(Set<Long> ids) throws RewardNotFoundException {
+        Set<Reward> rewards = rewardRepository.findAllById(ids);
+        if (rewards.size() != ids.size())
+            throw new RewardNotFoundException();
+        return rewards;
+    }
 
-        response.setSuccessResponse(new CreateStampMembershipResponse.SuccessResponse(
-            membershipId.get(),
+    private Long saveMembershipAndGetId(StampMembership membership) throws RuntimeException {
+        return membershipRepository.save(membership).orElseThrow(() -> new RuntimeException("Can't Create Stamp Membership"));
+    }
+
+    private void attachRewardsToMembership(Set<Reward> rewards, long membershipId) {
+        rewardRepository.attachToMembership(rewards, membershipId);
+    }
+
+    private CreateStampMembershipResponse buildResponse(long membershipId, StampMembership membership) {
+        return new CreateStampMembershipResponse(
+            membershipId,
             membership.getName(),
             membership.getRewardsQty(),
             membership.getRules().getCardCapacity(),
             membership.getCreatedAt()
-        ));
-        return response;
+        );
     }
 
     private StampMembership buildStampMembership(CreateStampMembershipCommand command, Merchant merchant, Set<Reward> rewards) throws IllegalArgumentException {

@@ -1,12 +1,14 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.MerchantNotFoundException;
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
 import com.mauntung.mauntung.application.port.membership.CreateStampMembershipCommand;
-import com.mauntung.mauntung.application.port.membership.CreateStampMembershipResponse;
 import com.mauntung.mauntung.application.port.membership.MembershipRepository;
 import com.mauntung.mauntung.application.port.merchant.MerchantRepository;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -16,31 +18,30 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CreateStampMembershipServiceTest {
+    private static MerchantRepository merchantRepository;
+    private static RewardRepository rewardRepository;
+    private static MembershipRepository membershipRepository;
+    private static Long userId;
+
+    @BeforeAll
+    static void beforeAll() {
+        merchantRepository = mock(MerchantRepository.class);
+        rewardRepository = mock(RewardRepository.class);
+        membershipRepository = mock(MembershipRepository.class);
+        userId = 1L;
+    }
     @Test
-    void givenNonExistingMerchantUserId_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-
+    void givenNonExistingMerchantUserId_apply_shouldThrowsException() {
         when(merchantRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         CreateStampMembershipCommand command = new CreateStampMembershipCommand("name", userId, Set.of(), 10, 10, 10);
         CreateStampMembershipService service = new CreateStampMembershipService(merchantRepository, rewardRepository, membershipRepository);
-        CreateStampMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(MerchantNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenNonExistingRewardId_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
+    void givenNonExistingRewardId_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -52,19 +53,12 @@ class CreateStampMembershipServiceTest {
 
         CreateStampMembershipCommand command = new CreateStampMembershipCommand("name", userId, rewardIds, 10, 10, 10);
         CreateStampMembershipService service = new CreateStampMembershipService(merchantRepository, rewardRepository, membershipRepository);
-        CreateStampMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RewardNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenMembershipRepositoryReturnEmpty_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
+    void givenMembershipRepositoryReturnEmpty_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -78,19 +72,12 @@ class CreateStampMembershipServiceTest {
 
         CreateStampMembershipCommand command = new CreateStampMembershipCommand("name", userId, rewardIds, 10, 10, 10);
         CreateStampMembershipService service = new CreateStampMembershipService(merchantRepository, rewardRepository, membershipRepository);
-        CreateStampMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RuntimeException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenMembershipRepositoryReturnLong_apply_shouldReturnSuccessResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
+    void givenMembershipRepositoryReturnLong_apply_shouldReturnsResponse() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -105,9 +92,7 @@ class CreateStampMembershipServiceTest {
 
         CreateStampMembershipCommand command = new CreateStampMembershipCommand("name", userId, rewardIds, 10, 10, 10);
         CreateStampMembershipService service = new CreateStampMembershipService(merchantRepository, rewardRepository, membershipRepository);
-        CreateStampMembershipResponse response = service.apply(command);
 
-        assertNull(response.getErrorResponse());
-        assertNotNull(response.getSuccessResponse());
+        assertNotNull(service.apply(command));
     }
 }
