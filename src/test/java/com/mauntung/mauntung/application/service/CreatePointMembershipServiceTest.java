@@ -93,7 +93,7 @@ class CreatePointMembershipServiceTest {
     }
 
     @Test
-    void givenMembershipRepositoryReturnEmpty_apply_shouldReturnErrorResponse() {
+    void givenMembershipRepositoryReturnEmpty_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -148,7 +148,7 @@ class CreatePointMembershipServiceTest {
     }
 
     @Test
-    void givenNonNullTierIdsAndMembershipRepositoryReturnLong_apply_shouldReturnSuccessResponse() {
+    void givenNonNullTierIdsAndMembershipRepositoryReturnLong_apply_shouldReturnResponse() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
