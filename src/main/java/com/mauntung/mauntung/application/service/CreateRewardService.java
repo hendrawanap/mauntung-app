@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -21,24 +20,18 @@ public class CreateRewardService implements CreateRewardUseCase {
 
     @Override
     public CreateRewardResponse apply(CreateRewardCommand command) {
-        CreateRewardResponse response = new CreateRewardResponse();
+        Reward reward = buildReward(command);
+        Long rewardId = saveRewardAndGetId(reward);
 
-        Reward newReward;
-        try {
-            newReward = buildReward(command);
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        return buildResponse(rewardId);
+    }
 
-        Optional<Long> rewardId = rewardRepository.save(newReward);
-        if (rewardId.isEmpty()) {
-            response.setErrorResponse("Can't create reward");
-            return response;
-        }
+    private Long saveRewardAndGetId(Reward reward) throws IllegalArgumentException {
+        return rewardRepository.save(reward).orElseThrow(() -> new RuntimeException("Can't Create Reward"));
+    }
 
-        response.setSuccessResponse(new CreateRewardResponse.SuccessResponse(rewardId.get(), new Date()));
-        return response;
+    private CreateRewardResponse buildResponse(long rewardId) {
+        return new CreateRewardResponse(rewardId, new Date());
     }
 
     private Reward buildReward(CreateRewardCommand command) throws IllegalArgumentException {
