@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.UserWithSpecifiedEmailExistedException;
 import com.mauntung.mauntung.application.port.merchant.MerchantRegisterCommand;
 import com.mauntung.mauntung.application.port.merchant.MerchantRegisterUseCase;
 import com.mauntung.mauntung.application.port.merchant.MerchantRegisterResponse;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -30,51 +30,30 @@ public class MerchantRegisterService implements MerchantRegisterUseCase {
 
     @Override
     public MerchantRegisterResponse apply(MerchantRegisterCommand command) {
-        MerchantRegisterResponse response = new MerchantRegisterResponse();
-
         boolean userIsExist = userIsExist(command.getEmail());
         if (userIsExist) {
-            response.setErrorResponse("User with specified email is already exist");
-            return response;
+            throw new UserWithSpecifiedEmailExistedException();
         }
 
-        User newUser;
-        try {
-            newUser = createUser(command.getEmail(), command.getPassword());
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        User user = createUser(command.getEmail(), command.getPassword());
+        Long userId = saveUserAndGetId(user);
 
-        Optional<Long> userId = userRepository.save(newUser);
-        if (userId.isEmpty()) {
-            response.setErrorResponse("Failed to create user");
-            return response;
-        }
+        Merchant merchant = createMerchant(command.getMerchantName());
+        Long merchantId = saveMerchantAndGetId(merchant, userId);
 
-        Merchant newMerchant;
-        try {
-            newMerchant = createMerchant(command.getMerchantName());
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        return buildResponse(userId, merchantId, merchant.getName());
+    }
 
-        Optional<Long> merchantId = merchantRepository.save(newMerchant, userId.get());
-        if (merchantId.isEmpty()) {
-            response.setErrorResponse("Failed to create merchant");
-            return response;
-        }
+    private MerchantRegisterResponse buildResponse(long userId, long merchantId, String merchantName) {
+        return new MerchantRegisterResponse(userId, merchantId, merchantName);
+    }
 
-        response.setSuccessResponse(
-            MerchantRegisterResponse.SuccessResponse.builder()
-                .merchantId(merchantId.get())
-                .merchantName(newMerchant.getName())
-                .userId(userId.get())
-                .build()
-        );
+    private Long saveMerchantAndGetId(Merchant merchant, Long userId) {
+        return merchantRepository.save(merchant, userId).orElseThrow(() -> new RuntimeException("Failed to save merchant"));
+    }
 
-        return response;
+    private Long saveUserAndGetId(User user) {
+        return userRepository.save(user).orElseThrow(() -> new RuntimeException("Failed to save user"));
     }
 
     private boolean userIsExist(String email) {
