@@ -1,10 +1,11 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
 import com.mauntung.mauntung.application.port.tier.CreateTierCommand;
-import com.mauntung.mauntung.application.port.tier.CreateTierResponse;
 import com.mauntung.mauntung.application.port.tier.TierRepository;
 import com.mauntung.mauntung.domain.model.reward.Reward;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -14,11 +15,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CreateTierServiceTest {
-    @Test
-    void givenNonExistingRewardId_apply_shouldReturnErrorResponse() {
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
+    private static RewardRepository rewardRepository;
+    private static TierRepository tierRepository;
 
+    @BeforeAll
+    static void beforeAll() {
+        rewardRepository = mock(RewardRepository.class);
+        tierRepository = mock(TierRepository.class);
+    }
+    @Test
+    void givenNonExistingRewardId_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -29,17 +35,12 @@ class CreateTierServiceTest {
 
         CreateTierCommand command = new CreateTierCommand("name", rewardIds, 10, 1.0F);
         CreateTierService service = new CreateTierService(rewardRepository, tierRepository);
-        CreateTierResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RewardNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenTierRepositorySaveReturnEmpty_apply_shouldReturnErrorResponse() {
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-
+    void givenTierRepositorySaveReturnEmpty_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -52,17 +53,12 @@ class CreateTierServiceTest {
 
         CreateTierCommand command = new CreateTierCommand("name", rewardIds, 10, 1.0F);
         CreateTierService service = new CreateTierService(rewardRepository, tierRepository);
-        CreateTierResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RuntimeException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenTierRepositorySaveReturnLong_apply_shouldReturnSuccessResponse() {
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-
+    void givenTierRepositorySaveReturnLong_apply_shouldReturnResponse() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -76,9 +72,7 @@ class CreateTierServiceTest {
 
         CreateTierCommand command = new CreateTierCommand("name", rewardIds, 10, 1.0F);
         CreateTierService service = new CreateTierService(rewardRepository, tierRepository);
-        CreateTierResponse response = service.apply(command);
 
-        assertNull(response.getErrorResponse());
-        assertNotNull(response.getSuccessResponse());
+        assertNotNull(service.apply(command));
     }
 }

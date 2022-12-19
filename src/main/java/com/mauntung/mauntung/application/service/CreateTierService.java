@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
 import com.mauntung.mauntung.application.port.tier.CreateTierCommand;
 import com.mauntung.mauntung.application.port.tier.CreateTierResponse;
@@ -10,7 +11,6 @@ import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -21,33 +21,35 @@ public class CreateTierService implements CreateTierUseCase {
 
     @Override
     public CreateTierResponse apply(CreateTierCommand command) {
-        CreateTierResponse response = new CreateTierResponse();
+        Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
+        Tier tier = buildTier(command, rewards);
+        Long tierId = saveTierAndGetId(tier);
 
-        Set<Reward> rewards = rewardRepository.findAllById(command.getRewardIds());
-        if (rewards.size() != command.getRewardIds().size()) {
-            response.setErrorResponse("Reward not found");
-            return response;
-        }
-
-        Tier tier;
-        try {
-            tier = createTier(command, rewards);
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
-
-        Optional<Long> tierId = tierRepository.save(tier);
-        if (tierId.isEmpty()) {
-            response.setErrorResponse("Can't create tier");
-            return response;
-        }
-
-        response.setSuccessResponse(new CreateTierResponse.SuccessResponse(tier, tierId.get()));
-        return response;
+        return buildResponse(tier, tierId);
     }
 
-    private Tier createTier(CreateTierCommand command, Set<Reward> rewards) throws IllegalArgumentException {
+    private Set<Reward> findAllRewardsByIds(Set<Long> ids) throws RewardNotFoundException {
+        Set<Reward> rewards = rewardRepository.findAllById(ids);
+        if (rewards.size() != ids.size())
+            throw new RewardNotFoundException();
+        return rewards;
+    }
+
+    private Long saveTierAndGetId(Tier tier) {
+        return tierRepository.save(tier).orElseThrow(() -> new RuntimeException("Can't Create Tier"));
+    }
+
+    private CreateTierResponse buildResponse(Tier tier, long tierId) {
+        return new CreateTierResponse(
+            tierId,
+            tier.getName(),
+            tier.getRewards().size(),
+            tier.getRequiredPoints(),
+            tier.getMultiplierFactor()
+        );
+    }
+
+    private Tier buildTier(CreateTierCommand command, Set<Reward> rewards) throws IllegalArgumentException {
         return Tier.withoutId(command.getName(), rewards, command.getRequiredPoints(), command.getMultiplierFactor());
     }
 }
