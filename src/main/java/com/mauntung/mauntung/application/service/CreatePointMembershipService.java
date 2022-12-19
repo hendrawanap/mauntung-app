@@ -1,5 +1,8 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.MerchantNotFoundException;
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
+import com.mauntung.mauntung.application.exception.TierNotFoundException;
 import com.mauntung.mauntung.application.port.membership.*;
 import com.mauntung.mauntung.application.port.merchant.MerchantRepository;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
@@ -11,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -24,58 +26,64 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
     private final PointMembershipFactory membershipFactory = new PointMembershipFactoryImpl();
 
     @Override
-    public CreatePointMembershipResponse apply(CreatePointMembershipCommand command) {
-        CreatePointMembershipResponse response = new CreatePointMembershipResponse();
-
-        Optional<Merchant> merchant = merchantRepository.findByUserId(command.getUserId());
-        if (merchant.isEmpty()) {
-            response.setErrorResponse("Merchant not found");
-            return response;
-        }
-
-        Set<Reward> rewards = rewardRepository.findAllById(command.getRewardIds());
-        if (rewards.size() != command.getRewardIds().size()) {
-            response.setErrorResponse("Reward not found");
-            return response;
-        }
+    public CreatePointMembershipResponse apply(CreatePointMembershipCommand command) throws MerchantNotFoundException, RewardNotFoundException, TierNotFoundException, IllegalArgumentException {
+        Merchant merchant = findMerchantByUserId(command.getUserId());
+        Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
 
         Set<Tier> tiers = null;
-        boolean withTiers = command.getTierIds() != null;
-        if (withTiers) {
-            tiers = tierRepository.findAllById(command.getTierIds());
-
-            if (tiers.size() != command.getTierIds().size()) {
-                response.setErrorResponse("Tier not found");
-                return response;
-            }
+        boolean hasTiers = command.getTierIds() != null;
+        if (hasTiers) {
+            tiers = findAllTiersByIds(command.getTierIds());
         }
 
-        PointMembership membership;
-        try {
-            membership = buildPointMembership(command, merchant.get(), rewards, tiers);
-        } catch (IllegalArgumentException ex) {
-            response.setErrorResponse(ex.getMessage());
-            return response;
-        }
+        PointMembership membership = buildPointMembership(command, merchant, rewards, tiers);
+        Long membershipId = saveMembershipAndGetId(membership);
 
-        Optional<Long> membershipId = membershipRepository.save(membership);
-        if (membershipId.isEmpty()) {
-            response.setErrorResponse("Can't create point membership");
-            return response;
-        }
+        attachRewardsToMembership(rewards, membershipId);
 
-        rewardRepository.attachToMembership(rewards, membershipId.get());
+        if (hasTiers) attachTiersToMembership(tiers, membershipId);
 
-        if (withTiers) tierRepository.attachToMembership(tiers, membershipId.get());
+        return buildResponse(membershipId, membership);
+    }
 
-        response.setSuccessResponse(new CreatePointMembershipResponse.SuccessResponse(
-            membershipId.get(),
+    private Merchant findMerchantByUserId(long userId) throws MerchantNotFoundException {
+        return merchantRepository.findByUserId(userId).orElseThrow(MerchantNotFoundException::new);
+    }
+
+    private Set<Reward> findAllRewardsByIds(Set<Long> ids) throws RewardNotFoundException {
+        Set<Reward> rewards = rewardRepository.findAllById(ids);
+        if (rewards.size() != ids.size())
+            throw new RewardNotFoundException();
+        return rewards;
+    }
+
+    private Set<Tier> findAllTiersByIds(Set<Long> ids) throws TierNotFoundException {
+        Set<Tier> tiers = tierRepository.findAllById(ids);
+        if (tiers.size() != ids.size())
+            throw new TierNotFoundException();
+        return tiers;
+    }
+
+    private Long saveMembershipAndGetId(PointMembership membership) throws RuntimeException {
+        return membershipRepository.save(membership).orElseThrow(() -> new RuntimeException("Can't Create Point Membership"));
+    }
+
+    private void attachRewardsToMembership(Set<Reward> rewards, long membershipId) {
+        rewardRepository.attachToMembership(rewards, membershipId);
+    }
+
+    private void attachTiersToMembership(Set<Tier> tiers, long membershipId) {
+        tierRepository.attachToMembership(tiers, membershipId);
+    }
+
+    private CreatePointMembershipResponse buildResponse(long membershipId, PointMembership membership) {
+        return new CreatePointMembershipResponse(
+            membershipId,
             membership.getName(),
             membership.getRewardsQty(),
             membership.getTiersQty(),
             membership.getCreatedAt()
-        ));
-        return response;
+        );
     }
 
     private PointMembership buildPointMembership(CreatePointMembershipCommand command, Merchant merchant, Set<Reward> rewards, Set<Tier> tiers) {

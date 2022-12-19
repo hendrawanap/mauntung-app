@@ -1,7 +1,9 @@
 package com.mauntung.mauntung.application.service;
 
+import com.mauntung.mauntung.application.exception.MerchantNotFoundException;
+import com.mauntung.mauntung.application.exception.RewardNotFoundException;
+import com.mauntung.mauntung.application.exception.TierNotFoundException;
 import com.mauntung.mauntung.application.port.membership.CreatePointMembershipCommand;
-import com.mauntung.mauntung.application.port.membership.CreatePointMembershipResponse;
 import com.mauntung.mauntung.application.port.membership.MembershipRepository;
 import com.mauntung.mauntung.application.port.merchant.MerchantRepository;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
@@ -11,6 +13,7 @@ import com.mauntung.mauntung.domain.model.membership.PointRules;
 import com.mauntung.mauntung.domain.model.membership.Tier;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -21,36 +24,34 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CreatePointMembershipServiceTest {
+    private static MerchantRepository merchantRepository;
+    private static RewardRepository rewardRepository;
+    private static TierRepository tierRepository;
+    private static MembershipRepository membershipRepository;
+    private static Long userId;
+    private static PointRules pointRules;
+
+    @BeforeAll
+    static void beforeAll() {
+        merchantRepository = mock(MerchantRepository.class);
+        rewardRepository = mock(RewardRepository.class);
+        tierRepository = mock(TierRepository.class);
+        membershipRepository = mock(MembershipRepository.class);
+        userId = 1L;
+        pointRules = mock(PointRules.class);
+    }
     @Test
-    void givenNonExistingMerchantUserId_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
+    void givenNonExistingMerchantUserId_apply_shouldThrowsException() {
         when(merchantRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, Set.of(), new Date(), pointRules, Set.of());
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(MerchantNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenNonExistingRewardId_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
+    void givenNonExistingRewardId_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -62,22 +63,12 @@ class CreatePointMembershipServiceTest {
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, Set.of());
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RewardNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenNonExistingTierId_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
+    void givenNonExistingTierId_apply_shouldThrowsException() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -97,22 +88,12 @@ class CreatePointMembershipServiceTest {
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(TierNotFoundException.class, () -> service.apply(command));
     }
 
     @Test
     void givenMembershipRepositoryReturnEmpty_apply_shouldReturnErrorResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -141,22 +122,12 @@ class CreatePointMembershipServiceTest {
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNotNull(response.getErrorResponse());
-        assertNull(response.getSuccessResponse());
+        assertThrows(RuntimeException.class, () -> service.apply(command));
     }
 
     @Test
-    void givenNullTierIdsAndMembershipRepositoryReturnLong_apply_shouldReturnSuccessResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
+    void givenNullTierIdsAndMembershipRepositoryReturnLong_apply_shouldReturnResponse() {
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -172,22 +143,12 @@ class CreatePointMembershipServiceTest {
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNull(response.getErrorResponse());
-        assertNotNull(response.getSuccessResponse());
+        assertNotNull(service.apply(command));
     }
 
     @Test
     void givenNonNullTierIdsAndMembershipRepositoryReturnLong_apply_shouldReturnSuccessResponse() {
-        MerchantRepository merchantRepository = mock(MerchantRepository.class);
-        RewardRepository rewardRepository = mock(RewardRepository.class);
-        TierRepository tierRepository = mock(TierRepository.class);
-        MembershipRepository membershipRepository = mock(MembershipRepository.class);
-
-        long userId = 1;
-        PointRules pointRules = mock(PointRules.class);
-
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Reward> rewards = Set.of(
             mock(Reward.class),
@@ -218,9 +179,7 @@ class CreatePointMembershipServiceTest {
 
         CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
-        CreatePointMembershipResponse response = service.apply(command);
 
-        assertNull(response.getErrorResponse());
-        assertNotNull(response.getSuccessResponse());
+        assertNotNull(service.apply(command));
     }
 }
