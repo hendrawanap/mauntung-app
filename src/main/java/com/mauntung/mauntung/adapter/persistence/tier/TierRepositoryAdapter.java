@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 @Component
 @RequiredArgsConstructor
-public class TierRepositoryImpl implements TierRepository {
+public class TierRepositoryAdapter implements TierRepository {
     private final JpaTierRepository jpaRepository;
     private final TierMapper mapper = new TierMapper();
 

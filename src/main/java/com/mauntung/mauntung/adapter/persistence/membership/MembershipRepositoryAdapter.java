@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MembershipRepositoryImpl implements MembershipRepository {
+public class MembershipRepositoryAdapter implements MembershipRepository {
     private final JpaMembershipRepository jpaRepository;
     private final MembershipMapper mapper = new MembershipMapper();
 

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class MerchantRepositoryImplTest {
+class MerchantRepositoryAdapterTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -41,7 +41,7 @@ class MerchantRepositoryImplTest {
         entityManager.persist(merchantEntity);
         entityManager.flush();
 
-        MerchantRepository merchantRepository = new MerchantRepositoryImpl(jpaMerchantRepository);
+        MerchantRepository merchantRepository = new MerchantRepositoryAdapter(jpaMerchantRepository);
 
         Optional<Merchant> merchant = merchantRepository.findByUserId(userId);
         assertTrue(merchant.isPresent());
@@ -63,7 +63,7 @@ class MerchantRepositoryImplTest {
         entityManager.persist(merchantEntity);
         entityManager.flush();
 
-        MerchantRepository merchantRepository = new MerchantRepositoryImpl(jpaMerchantRepository);
+        MerchantRepository merchantRepository = new MerchantRepositoryAdapter(jpaMerchantRepository);
 
         long differentUserId = userId != 100L ? 100L : 500L;
         Optional<Merchant> merchant = merchantRepository.findByUserId(differentUserId);
@@ -86,7 +86,7 @@ class MerchantRepositoryImplTest {
         merchantEntity = entityManager.persist(merchantEntity);
         entityManager.flush();
 
-        MerchantRepository merchantRepository = new MerchantRepositoryImpl(jpaMerchantRepository);
+        MerchantRepository merchantRepository = new MerchantRepositoryAdapter(jpaMerchantRepository);
         MerchantFactory merchantFactory = new MerchantFactoryImpl();
         Merchant merchant = merchantFactory.builder("merchant2", merchantEntity.getCreatedAt())
             .id(merchantEntity.getId())
@@ -107,7 +107,7 @@ class MerchantRepositoryImplTest {
         Long userId = entityManager.persistAndGetId(userEntity, Long.class);
         entityManager.flush();
 
-        MerchantRepository merchantRepository = new MerchantRepositoryImpl(jpaMerchantRepository);
+        MerchantRepository merchantRepository = new MerchantRepositoryAdapter(jpaMerchantRepository);
         MerchantFactory merchantFactory = new MerchantFactoryImpl();
         Merchant merchant = merchantFactory.builder("merchant", new Date()).build();
 

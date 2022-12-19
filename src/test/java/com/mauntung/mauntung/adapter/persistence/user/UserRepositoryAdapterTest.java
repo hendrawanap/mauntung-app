@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class UserRepositoryImplTest {
+class UserRepositoryAdapterTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -36,7 +36,7 @@ class UserRepositoryImplTest {
         entityManager.persist(entity);
         entityManager.flush();
 
-        UserRepository userRepository = new UserRepositoryImpl(jpaUserRepository);
+        UserRepository userRepository = new UserRepositoryAdapter(jpaUserRepository);
 
         Optional<User> user = userRepository.findByEmail(email);
         assertTrue(user.isPresent());
@@ -53,7 +53,7 @@ class UserRepositoryImplTest {
         entityManager.persist(entity);
         entityManager.flush();
 
-        UserRepository userRepository = new UserRepositoryImpl(jpaUserRepository);
+        UserRepository userRepository = new UserRepositoryAdapter(jpaUserRepository);
 
         Optional<User> user = userRepository.findByEmail("invalid@mail.com");
         assertTrue(user.isEmpty());
@@ -63,7 +63,7 @@ class UserRepositoryImplTest {
     void save_shouldReturnId() {
         UserFactory userFactory = new UserFactoryImpl();
         User user = userFactory.createWithoutId("merchant@mail.com", "password", "merchant", new Date());
-        UserRepository userRepository = new UserRepositoryImpl(jpaUserRepository);
+        UserRepository userRepository = new UserRepositoryAdapter(jpaUserRepository);
 
         Optional<Long> userId = userRepository.save(user);
         assertTrue(userId.isPresent());

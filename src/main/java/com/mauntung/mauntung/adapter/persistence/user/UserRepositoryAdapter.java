@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryAdapter implements UserRepository {
     private final JpaUserRepository jpaRepository;
     private final UserMapper mapper = new UserMapper();
 

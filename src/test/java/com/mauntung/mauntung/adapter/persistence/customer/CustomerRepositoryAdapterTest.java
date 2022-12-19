@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class CustomerRepositoryImplTest {
+class CustomerRepositoryAdapterTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -43,7 +43,7 @@ class CustomerRepositoryImplTest {
         entityManager.persist(customerEntity);
         entityManager.flush();
 
-        CustomerRepository customerRepository = new CustomerRepositoryImpl(jpaCustomerRepository);
+        CustomerRepository customerRepository = new CustomerRepositoryAdapter(jpaCustomerRepository);
 
         Optional<Customer> customer = customerRepository.findByUserId(userId);
         assertTrue(customer.isPresent());
@@ -66,7 +66,7 @@ class CustomerRepositoryImplTest {
         entityManager.persist(customerEntity);
         entityManager.flush();
 
-        CustomerRepository customerRepository = new CustomerRepositoryImpl(jpaCustomerRepository);
+        CustomerRepository customerRepository = new CustomerRepositoryAdapter(jpaCustomerRepository);
 
         long differentUserId = userId != 1L ? 1L : 2L;
         Optional<Customer> customer = customerRepository.findByUserId(differentUserId);
@@ -90,7 +90,7 @@ class CustomerRepositoryImplTest {
         entityManager.persist(customerEntity);
         entityManager.flush();
 
-        CustomerRepository customerRepository = new CustomerRepositoryImpl(jpaCustomerRepository);
+        CustomerRepository customerRepository = new CustomerRepositoryAdapter(jpaCustomerRepository);
         CustomerFactory customerFactory = new CustomerFactoryImpl();
         Customer customer = customerFactory.builder("newName", customerEntity.getCustomerCode(), customerEntity.getCreatedAt())
             .id(customerEntity.getId())
@@ -111,7 +111,7 @@ class CustomerRepositoryImplTest {
         Long userId = entityManager.persist(userEntity).getId();
         entityManager.flush();
 
-        CustomerRepository customerRepository = new CustomerRepositoryImpl(jpaCustomerRepository);
+        CustomerRepository customerRepository = new CustomerRepositoryAdapter(jpaCustomerRepository);
         CustomerFactory customerFactory = new CustomerFactoryImpl();
         Customer customer = customerFactory.builder("newName", UUID.randomUUID(), new Date()).build();
 

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class TierRepositoryImplTest {
+class TierRepositoryAdapterTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -42,7 +42,7 @@ class TierRepositoryImplTest {
         entityManager.flush();
 
         Tier tier = Tier.withoutId("name", rewards, 10, 1F);
-        TierRepository tierRepository = new TierRepositoryImpl(jpaTierRepository);
+        TierRepository tierRepository = new TierRepositoryAdapter(jpaTierRepository);
         Optional<Long> tierId = tierRepository.save(tier);
         assertTrue(tierId.isPresent());
     }
@@ -71,7 +71,7 @@ class TierRepositoryImplTest {
         }
         entityManager.flush();
 
-        TierRepository tierRepository = new TierRepositoryImpl(jpaTierRepository);
+        TierRepository tierRepository = new TierRepositoryAdapter(jpaTierRepository);
         Set<Tier> tiers = tierRepository.findAllById(tierIds);
         assertEquals(tierIds.size(), tiers.size());
     }

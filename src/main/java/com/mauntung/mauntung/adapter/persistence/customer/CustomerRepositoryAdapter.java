@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class CustomerRepositoryImpl implements CustomerRepository {
+public class CustomerRepositoryAdapter implements CustomerRepository {
     private final JpaCustomerRepository jpaRepository;
     private final CustomerMapper mapper = new CustomerMapper();
 

@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 
 @Component
 @RequiredArgsConstructor
-public class RewardRepositoryImpl implements RewardRepository {
+public class RewardRepositoryAdapter implements RewardRepository {
     private final JpaRewardRepository jpaRepository;
     private final RewardMapper mapper = new RewardMapper();
 

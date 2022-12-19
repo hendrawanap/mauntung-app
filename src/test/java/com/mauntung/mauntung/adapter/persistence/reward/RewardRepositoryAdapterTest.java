@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class RewardRepositoryImplTest {
+class RewardRepositoryAdapterTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -27,7 +27,7 @@ class RewardRepositoryImplTest {
     void save_shouldReturnId() {
         RewardFactory rewardFactory = new RewardFactoryImpl();
         Reward reward = rewardFactory.builder("name", "desc", "terms", 10).build();
-        RewardRepository rewardRepository = new RewardRepositoryImpl(jpaRewardRepository);
+        RewardRepository rewardRepository = new RewardRepositoryAdapter(jpaRewardRepository);
         Optional<Long> rewardId = rewardRepository.save(reward);
         assertTrue(rewardId.isPresent());
     }
@@ -46,7 +46,7 @@ class RewardRepositoryImplTest {
         }
         entityManager.flush();
 
-        RewardRepository rewardRepository = new RewardRepositoryImpl(jpaRewardRepository);
+        RewardRepository rewardRepository = new RewardRepositoryAdapter(jpaRewardRepository);
         Set<Reward> rewards = rewardRepository.findAllById(rewardIds);
         assertEquals(rewardIds.size(), rewards.size());
     }

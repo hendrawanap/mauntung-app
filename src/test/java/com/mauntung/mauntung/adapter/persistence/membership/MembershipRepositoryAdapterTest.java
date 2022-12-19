@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class MembershipRepositoryImplTest {
+class MembershipRepositoryAdapterTest {
     @Autowired
     private TestEntityManager entityManager;
 
@@ -104,7 +104,7 @@ class MembershipRepositoryImplTest {
         )
             .tiers(tierEntities.stream().map(tierMapper::entityToModel).collect(Collectors.toSet()))
             .build();
-        MembershipRepository membershipRepository = new MembershipRepositoryImpl(jpaMembershipRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryAdapter(jpaMembershipRepository);
         Optional<Long> membershipId = membershipRepository.save(membership);
         assertTrue(membershipId.isPresent());
     }
@@ -148,7 +148,7 @@ class MembershipRepositoryImplTest {
             new Date(),
             rules
         ).build();
-        MembershipRepository membershipRepository = new MembershipRepositoryImpl(jpaMembershipRepository);
+        MembershipRepository membershipRepository = new MembershipRepositoryAdapter(jpaMembershipRepository);
         Optional<Long> membershipId = membershipRepository.save(membership);
         assertTrue(membershipId.isPresent());
     }

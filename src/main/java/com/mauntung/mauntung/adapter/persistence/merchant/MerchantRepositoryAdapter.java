@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class MerchantRepositoryImpl implements MerchantRepository {
+public class MerchantRepositoryAdapter implements MerchantRepository {
     private final JpaMerchantRepository jpaRepository;
     private final MerchantMapper mapper = new MerchantMapper();
 
