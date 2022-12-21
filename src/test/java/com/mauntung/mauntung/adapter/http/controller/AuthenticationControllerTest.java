@@ -1,6 +1,8 @@
 package com.mauntung.mauntung.adapter.http.controller;
 
 import com.mauntung.mauntung.application.exception.UserWithSpecifiedEmailExistedException;
+import com.mauntung.mauntung.application.port.customer.CustomerRegisterResponse;
+import com.mauntung.mauntung.application.port.customer.CustomerRegisterUseCase;
 import com.mauntung.mauntung.application.port.merchant.MerchantRegisterResponse;
 import com.mauntung.mauntung.application.port.merchant.MerchantRegisterUseCase;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,9 @@ class AuthenticationControllerTest {
 
     @MockBean
     private MerchantRegisterUseCase merchantRegisterUseCase;
+
+    @MockBean
+    private CustomerRegisterUseCase customerRegisterUseCase;
 
     @Test
     void givenValidEmail_merchantRegister_shouldReturnCreatedStatus() throws Exception {
@@ -68,6 +73,57 @@ class AuthenticationControllerTest {
         when(merchantRegisterUseCase.apply(any())).thenThrow(new UserWithSpecifiedEmailExistedException());
         mvc.perform(
                 post("/merchant/auth/register")
+                    .content(requestBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void givenValidEmail_customerRegister_shouldReturnCreatedStatus() throws Exception {
+        String requestBody = "{\n" +
+            "    \"fullName\": \"Joomla\",\n" +
+            "    \"email\": \"joomla@customer.com\",\n" +
+            "    \"password\": \"password123\"\n" +
+            "}";
+        when(customerRegisterUseCase.apply(any())).thenReturn(new CustomerRegisterResponse(1L, 1L, "Joomla"));
+        mvc.perform(
+                post("/customer/auth/register")
+                    .content(requestBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isCreated())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void givenMalformedEmail_customerRegister_shouldReturnBadRequestStatus() throws Exception {
+        String requestBody = "{\n" +
+            "    \"fullName\": \"Joomla\",\n" +
+            "    \"email\": \"joomlacustomer.com\",\n" +
+            "    \"password\": \"password123\"\n" +
+            "}";
+        when(customerRegisterUseCase.apply(any())).thenThrow(new IllegalArgumentException("Invalid email"));
+        mvc.perform(
+                post("/customer/auth/register")
+                    .content(requestBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void givenExistedEmail_customerRegister_shouldReturnBadRequestStatus() throws Exception {
+        String requestBody = "{\n" +
+            "    \"fullName\": \"Joomla\",\n" +
+            "    \"email\": \"joomla@customer.com\",\n" +
+            "    \"password\": \"password123\"\n" +
+            "}";
+        when(customerRegisterUseCase.apply(any())).thenThrow(new UserWithSpecifiedEmailExistedException());
+        mvc.perform(
+                post("/customer/auth/register")
                     .content(requestBody)
                     .contentType(MediaType.APPLICATION_JSON)
             )
