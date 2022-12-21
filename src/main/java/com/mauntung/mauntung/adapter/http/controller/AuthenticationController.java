@@ -1,13 +1,13 @@
 package com.mauntung.mauntung.adapter.http.controller;
 
-import com.mauntung.mauntung.adapter.http.request.CustomerLoginRequest;
-import com.mauntung.mauntung.adapter.http.request.CustomerRegisterRequest;
-import com.mauntung.mauntung.adapter.http.request.MerchantLoginRequest;
-import com.mauntung.mauntung.adapter.http.request.MerchantRegisterRequest;
-import com.mauntung.mauntung.adapter.http.response.CustomerLoginResponseBody;
-import com.mauntung.mauntung.adapter.http.response.CustomerRegisterResponseBody;
-import com.mauntung.mauntung.adapter.http.response.MerchantLoginResponseBody;
-import com.mauntung.mauntung.adapter.http.response.MerchantRegisterResponseBody;
+import com.mauntung.mauntung.adapter.http.request.authentication.CustomerLoginRequest;
+import com.mauntung.mauntung.adapter.http.request.authentication.CustomerRegisterRequest;
+import com.mauntung.mauntung.adapter.http.request.authentication.MerchantLoginRequest;
+import com.mauntung.mauntung.adapter.http.request.authentication.MerchantRegisterRequest;
+import com.mauntung.mauntung.adapter.http.response.authentication.CustomerLoginResponseBody;
+import com.mauntung.mauntung.adapter.http.response.authentication.CustomerRegisterResponseBody;
+import com.mauntung.mauntung.adapter.http.response.authentication.MerchantLoginResponseBody;
+import com.mauntung.mauntung.adapter.http.response.authentication.MerchantRegisterResponseBody;
 import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
 import com.mauntung.mauntung.adapter.http.security.UserDetailsImpl;
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterCommand;

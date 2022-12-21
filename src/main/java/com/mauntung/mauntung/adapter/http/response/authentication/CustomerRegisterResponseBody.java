@@ -1,4 +1,4 @@
-package com.mauntung.mauntung.adapter.http.response;
+package com.mauntung.mauntung.adapter.http.response.authentication;
 
 import com.mauntung.mauntung.application.port.customer.CustomerRegisterResponse;
 import lombok.Getter;

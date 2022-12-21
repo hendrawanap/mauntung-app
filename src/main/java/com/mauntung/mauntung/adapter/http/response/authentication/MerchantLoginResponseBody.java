@@ -1,4 +1,4 @@
-package com.mauntung.mauntung.adapter.http.response;
+package com.mauntung.mauntung.adapter.http.response.authentication;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
