@@ -34,6 +34,7 @@ class AuthenticationControllerTest {
     private static final String MERCHANT_REGISTER_URL = "/merchant/auth/register";
     private static final String CUSTOMER_REGISTER_URL = "/customer/auth/register";
     private static final String MERCHANT_LOGIN_URL = "/merchant/auth/login";
+    private static final String CUSTOMER_LOGIN_URL = "/customer/auth/login";
     private static final ObjectMapper jsonMapper = new ObjectMapper();
 
     @Autowired
@@ -68,6 +69,13 @@ class AuthenticationControllerTest {
     }
 
     private static String prepareMerchantLoginRequestBody(String email, String password) throws JsonProcessingException {
+        return jsonMapper.writeValueAsString(Map.of(
+            "email", email,
+            "password", password
+        ));
+    }
+
+    private static String prepareCustomerLoginRequestBody(String email, String password) throws JsonProcessingException {
         return jsonMapper.writeValueAsString(Map.of(
             "email", email,
             "password", password
@@ -219,6 +227,47 @@ class AuthenticationControllerTest {
                     .content(requestBody)
                     .contentType(MediaType.APPLICATION_JSON)
         )
+            .andExpect(status().isUnauthorized())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void givenValidCredentials_customerLogin_shouldReturnOkStatus() throws Exception {
+        String email = "joomla@customer.com";
+        String password = "password123";
+        String requestBody = prepareCustomerLoginRequestBody(email, password);
+
+        Authentication auth = mock(Authentication.class);
+        String token = "this-is-token";
+        Date tokenExpiredDate = new Date();
+        when(auth.getPrincipal()).thenReturn(mock(UserDetailsImpl.class));
+        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password))).thenReturn(auth);
+        when(jwtTokenService.generateToken(auth)).thenReturn(token);
+        when(jwtTokenService.getTokenExpiredDate(token)).thenReturn(tokenExpiredDate);
+
+        mvc.perform(
+                post(CUSTOMER_LOGIN_URL)
+                    .content(requestBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void givenInvalidCredentials_customerLogin_shouldReturnUnauthorizedStatus() throws Exception {
+        String email = "joomla@customer.com";
+        String password = "password123";
+        String requestBody = prepareCustomerLoginRequestBody(email, password);
+
+        when(authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password)))
+            .thenThrow(new BadCredentialsException("bad credentials"));
+
+        mvc.perform(
+                post(CUSTOMER_LOGIN_URL)
+                    .content(requestBody)
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
             .andExpect(status().isUnauthorized())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }

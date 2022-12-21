@@ -1,8 +1,10 @@
 package com.mauntung.mauntung.adapter.http.controller;
 
+import com.mauntung.mauntung.adapter.http.request.CustomerLoginRequest;
 import com.mauntung.mauntung.adapter.http.request.CustomerRegisterRequest;
 import com.mauntung.mauntung.adapter.http.request.MerchantLoginRequest;
 import com.mauntung.mauntung.adapter.http.request.MerchantRegisterRequest;
+import com.mauntung.mauntung.adapter.http.response.CustomerLoginResponseBody;
 import com.mauntung.mauntung.adapter.http.response.CustomerRegisterResponseBody;
 import com.mauntung.mauntung.adapter.http.response.MerchantLoginResponseBody;
 import com.mauntung.mauntung.adapter.http.response.MerchantRegisterResponseBody;
@@ -66,6 +68,16 @@ public class AuthenticationController {
         String token = jwtTokenService.generateToken(auth);
         Date tokenExpiredDate = jwtTokenService.getTokenExpiredDate(token);
         MerchantLoginResponseBody responseBody = new MerchantLoginResponseBody(userDetails.getId(), token, tokenExpiredDate);
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+    }
+
+    @PostMapping("/customer/auth/login")
+    public ResponseEntity<CustomerLoginResponseBody> customerLogin(@RequestBody @Valid CustomerLoginRequest request) {
+        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        String token = jwtTokenService.generateToken(auth);
+        Date tokenExpiredDate = jwtTokenService.getTokenExpiredDate(token);
+        CustomerLoginResponseBody responseBody = new CustomerLoginResponseBody(userDetails.getId(), token, tokenExpiredDate);
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 }
