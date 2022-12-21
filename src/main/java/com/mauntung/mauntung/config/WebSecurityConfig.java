@@ -10,7 +10,10 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -26,6 +30,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @EnableWebSecurity
@@ -59,13 +64,11 @@ public class WebSecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(configurer -> configurer
                 .authenticationEntryPoint((request, response, authException) -> {
-                    Map<String, Object> responseMap = new HashMap<>();
+                    Map<String, Object> responseBody = prepareUnauthorizedResponseBody(authException);
                     ObjectMapper mapper = new ObjectMapper();
-                    response.setStatus(401);
-                    responseMap.put("error", true);
-                    responseMap.put("message", "Unauthorized");
-                    response.setHeader("content-type", "application/json");
-                    String responseMsg = mapper.writeValueAsString(responseMap);
+                    String responseMsg = mapper.writeValueAsString(responseBody);
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE);
                     response.getWriter().write(responseMsg);
                 })
             )
@@ -82,5 +85,15 @@ public class WebSecurityConfig {
         JWK jwk = new RSAKey.Builder(rsaKeys.getPublicKey()).privateKey(rsaKeys.getPrivateKey()).build();
         JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwkSource);
+    }
+
+    private Map<String, Object> prepareUnauthorizedResponseBody(AuthenticationException ex) {
+        Map<String, Object> responseMap = new HashMap<>();
+        if (ex instanceof BadCredentialsException) {
+            responseMap.put("errors", List.of("Bad Credentials"));
+        } else {
+            responseMap.put("errors", List.of("Unauthorized"));
+        }
+        return responseMap;
     }
 }
