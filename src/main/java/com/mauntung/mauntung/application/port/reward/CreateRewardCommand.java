@@ -36,12 +36,8 @@ public class CreateRewardCommand {
             return this;
         }
 
-        public Builder startPeriod(Date startPeriod) {
+        public Builder periods(Date startPeriod, Date endPeriod) {
             this.startPeriod = startPeriod;
-            return this;
-        }
-
-        public Builder endPeriod(Date endPeriod) {
             this.endPeriod = endPeriod;
             return this;
         }

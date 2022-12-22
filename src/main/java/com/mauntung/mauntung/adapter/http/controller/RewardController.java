@@ -46,7 +46,7 @@ public class RewardController {
             try {
                 Date startPeriod = parseStringDateToDate(request.getStartPeriod());
                 Date endPeriod = parseStringDateToDate(request.getEndPeriod());
-                setPeriodsToCreateCommandBuilder(startPeriod, endPeriod, commandBuilder);
+                commandBuilder.periods(startPeriod, endPeriod);
             } catch (ParseException e) {
                 throw new IllegalArgumentException("Invalid Date Format Provided (valid: yyyy-mm-dd; e.g. 2022-12-20)");
             }
@@ -60,10 +60,5 @@ public class RewardController {
     private Date parseStringDateToDate(String stringDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");
         return formatter.parse(stringDate);
-    }
-
-    private void setPeriodsToCreateCommandBuilder(Date startPeriod, Date endPeriod, CreateRewardCommand.Builder builder) {
-        builder.startPeriod(startPeriod);
-        builder.endPeriod(endPeriod);
     }
 }
