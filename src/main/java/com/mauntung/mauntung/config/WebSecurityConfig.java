@@ -29,6 +29,9 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,16 +65,7 @@ public class WebSecurityConfig {
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .exceptionHandling(configurer -> configurer
-                .authenticationEntryPoint((request, response, authException) -> {
-                    Map<String, Object> responseBody = prepareUnauthorizedResponseBody(authException);
-                    ObjectMapper mapper = new ObjectMapper();
-                    String responseMsg = mapper.writeValueAsString(responseBody);
-                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                    response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE);
-                    response.getWriter().write(responseMsg);
-                })
-            )
+            .exceptionHandling(configurer -> configurer.authenticationEntryPoint(this::prepareUnauthorizedResponse))
             .build();
     }
 
@@ -87,7 +81,7 @@ public class WebSecurityConfig {
         return new NimbusJwtEncoder(jwkSource);
     }
 
-    private Map<String, Object> prepareUnauthorizedResponseBody(AuthenticationException ex) {
+    private Map<String, Object> buildUnauthorizedResponseBody(AuthenticationException ex) {
         Map<String, Object> responseMap = new HashMap<>();
         if (ex instanceof BadCredentialsException) {
             responseMap.put("errors", List.of("Bad Credentials"));
@@ -95,5 +89,14 @@ public class WebSecurityConfig {
             responseMap.put("errors", List.of("Unauthorized"));
         }
         return responseMap;
+    }
+
+    private void prepareUnauthorizedResponse(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException {
+        Map<String, Object> responseBody = buildUnauthorizedResponseBody(ex);
+        ObjectMapper mapper = new ObjectMapper();
+        String responseMsg = mapper.writeValueAsString(responseBody);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setHeader("content-type", MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(responseMsg);
     }
 }
