@@ -13,7 +13,6 @@ public class CreateRewardCommand {
     private final String description;
     private final String termsCondition;
     private final int cost;
-    private final String imgUrl;
     private final Integer stock;
     private final Date startPeriod;
     private final Date endPeriod;
@@ -28,15 +27,9 @@ public class CreateRewardCommand {
         private final String description;
         private final String termsCondition;
         private final int cost;
-        private String imgUrl;
         private Integer stock;
         private Date startPeriod;
         private Date endPeriod;
-
-        public Builder imgUrl(String imgUrl) {
-            this.imgUrl = imgUrl;
-            return this;
-        }
 
         public Builder stock(Integer stock) {
             this.stock = stock;
@@ -54,7 +47,7 @@ public class CreateRewardCommand {
         }
 
         public CreateRewardCommand build() {
-            return new CreateRewardCommand(name, description, termsCondition, cost, imgUrl, stock, startPeriod, endPeriod);
+            return new CreateRewardCommand(name, description, termsCondition, cost, stock, startPeriod, endPeriod);
         }
     }
 }
