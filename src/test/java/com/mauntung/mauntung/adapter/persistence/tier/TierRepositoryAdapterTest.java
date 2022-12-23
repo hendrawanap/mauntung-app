@@ -4,6 +4,8 @@ import com.mauntung.mauntung.adapter.persistence.reward.RewardEntity;
 import com.mauntung.mauntung.adapter.persistence.reward.RewardMapper;
 import com.mauntung.mauntung.application.port.tier.TierRepository;
 import com.mauntung.mauntung.domain.model.membership.Tier;
+import com.mauntung.mauntung.domain.model.membership.TierFactory;
+import com.mauntung.mauntung.domain.model.membership.TierFactoryImpl;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TierRepositoryAdapterTest {
+    private final TierFactory tierFactory = new TierFactoryImpl();
+
     @Autowired
     private TestEntityManager entityManager;
 
@@ -41,7 +45,9 @@ class TierRepositoryAdapterTest {
         }
         entityManager.flush();
 
-        Tier tier = Tier.withoutId("name", rewards, 10, 1F);
+        Tier tier = tierFactory.builder("name", rewards, 10)
+            .multiplierFactor(1F)
+            .build();
         TierRepository tierRepository = new TierRepositoryAdapter(jpaTierRepository);
         Optional<Long> tierId = tierRepository.save(tier);
         assertTrue(tierId.isPresent());

@@ -7,6 +7,8 @@ import com.mauntung.mauntung.application.port.tier.CreateTierResponse;
 import com.mauntung.mauntung.application.port.tier.CreateTierUseCase;
 import com.mauntung.mauntung.application.port.tier.TierRepository;
 import com.mauntung.mauntung.domain.model.membership.Tier;
+import com.mauntung.mauntung.domain.model.membership.TierFactory;
+import com.mauntung.mauntung.domain.model.membership.TierFactoryImpl;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.Set;
 @Component
 @RequiredArgsConstructor
 public class CreateTierService implements CreateTierUseCase {
+    private final TierFactory tierFactory = new TierFactoryImpl();
     private final RewardRepository rewardRepository;
     private final TierRepository tierRepository;
 
@@ -50,6 +53,8 @@ public class CreateTierService implements CreateTierUseCase {
     }
 
     private Tier buildTier(CreateTierCommand command, Set<Reward> rewards) throws IllegalArgumentException {
-        return Tier.withoutId(command.getName(), rewards, command.getRequiredPoints(), command.getMultiplierFactor());
+        return tierFactory.builder(command.getName(), rewards, command.getRequiredPoints())
+            .multiplierFactor(command.getMultiplierFactor())
+            .build();
     }
 }

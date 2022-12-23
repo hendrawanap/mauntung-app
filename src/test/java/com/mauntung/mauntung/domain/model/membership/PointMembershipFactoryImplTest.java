@@ -6,8 +6,7 @@ import com.mauntung.mauntung.domain.model.merchant.MerchantFactoryImpl;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import com.mauntung.mauntung.domain.model.reward.RewardFactory;
 import com.mauntung.mauntung.domain.model.reward.RewardFactoryImpl;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class PointMembershipFactoryImplTest {
     static final PointMembershipFactory membershipFactory = new PointMembershipFactoryImpl();
@@ -34,75 +34,36 @@ class PointMembershipFactoryImplTest {
         Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER),
         new PointGeneration(PointGeneration.TYPE_NOMINAL, 10, 10_000)
     );
-    static final Set<Tier> tiers = Set.of(
-        Tier.withoutId(
-            "bronze",
-            Set.of(rewardFactory.builder("", "", "", 10).build()),
-            0,
-            1F
-        ),
-        Tier.withoutId(
-            "silver",
-            Set.of(rewardFactory.builder("", "", "", 10).build()),
-            10,
-            1.1F
-        )
-    );
+    static Set<Tier> tiers;
 
     static Stream<Set<Tier>> invalidTiersProvider() {
+        Tier zeroRequiredPointsTier = mock(Tier.class);
+        Tier tenRequiredPointsTier = mock(Tier.class);
+        Tier twentyRequiredPointsTier1 = mock(Tier.class);
+        Tier twentyRequiredPointsTier2 = mock(Tier.class);
+
+        when(zeroRequiredPointsTier.getRequiredPoints()).thenReturn(0);
+        when(tenRequiredPointsTier.getRequiredPoints()).thenReturn(10);
+        when(twentyRequiredPointsTier1.getRequiredPoints()).thenReturn(20);
+        when(twentyRequiredPointsTier2.getRequiredPoints()).thenReturn(20);
+
         return Stream.of(
             Set.of(),
-            Set.of(
-                Tier.withoutId(
-                    "bronze",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    0,
-                    1F
-                )
-            ),
-            Set.of(
-                Tier.withoutId(
-                    "bronze",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    10,
-                    1F
-                ),
-                Tier.withoutId(
-                    "silver",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    20,
-                    1.1F
-                )
-            ),
-            Set.of(
-                Tier.withoutId(
-                    "bronze",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    0,
-                    1F
-                ),
-                Tier.withoutId(
-                    "silver",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    20,
-                    1.1F
-                ),
-                Tier.withoutId(
-                    "Gold",
-                    Set.of(rewardFactory.builder("", "", "", 10).build()),
-                    20,
-                    1.1F
-                )
-            )
+            Set.of(zeroRequiredPointsTier),
+            Set.of(tenRequiredPointsTier, twentyRequiredPointsTier1),
+            Set.of(zeroRequiredPointsTier, twentyRequiredPointsTier1, twentyRequiredPointsTier2)
         );
     }
 
-    @BeforeEach
-    void setUp() {
-    }
+    @BeforeAll
+    static void beforeAll() {
+        Tier firstTier = mock(Tier.class);
+        Tier secondTier = mock(Tier.class);
 
-    @AfterEach
-    void tearDown() {
+        when(firstTier.getRequiredPoints()).thenReturn(0);
+        when(secondTier.getRequiredPoints()).thenReturn(10);
+
+        tiers = Set.of(firstTier, secondTier);
     }
 
     @Test
