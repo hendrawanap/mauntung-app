@@ -41,4 +41,8 @@ public class JwtTokenService {
         }
         return null;
     }
+
+    public Long getUserId(Jwt principal) {
+        return principal.getClaim("userId");
+    }
 }
