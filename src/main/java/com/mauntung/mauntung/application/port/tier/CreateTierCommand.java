@@ -11,5 +11,5 @@ public class CreateTierCommand {
     private final String name;
     private final Set<Long> rewardIds;
     private final int requiredPoints;
-    private final float multiplierFactor;
+    private final Float multiplierFactor;
 }
