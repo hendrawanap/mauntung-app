@@ -91,7 +91,7 @@ class RewardControllerTest {
 
     @ParameterizedTest
     @MethodSource("validCreateRewardRequestBodyProvider")
-    void givenValidArgs_createReward_shouldReturnOkStatus(String requestBody) throws Exception {
+    void givenValidArgs_createReward_shouldReturnCreatedStatus(String requestBody) throws Exception {
         when(createRewardUseCase.apply(any())).thenReturn(new CreateRewardResponse(1L, new Date()));
 
         mvc.perform(
