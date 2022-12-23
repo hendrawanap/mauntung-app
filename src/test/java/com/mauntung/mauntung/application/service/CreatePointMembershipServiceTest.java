@@ -16,7 +16,6 @@ import com.mauntung.mauntung.domain.model.reward.Reward;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 
@@ -44,7 +43,7 @@ class CreatePointMembershipServiceTest {
     void givenNonExistingMerchantUserId_apply_shouldThrowsException() {
         when(merchantRepository.findByUserId(userId)).thenReturn(Optional.empty());
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, Set.of(), new Date(), pointRules, Set.of());
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, Set.of(), pointRules, Set.of());
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertThrows(MerchantNotFoundException.class, () -> service.apply(command));
@@ -61,7 +60,7 @@ class CreatePointMembershipServiceTest {
         when(merchantRepository.findByUserId(userId)).thenReturn(Optional.of(mock(Merchant.class)));
         when(rewardRepository.findAllById(rewardIds)).thenReturn(rewards);
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, Set.of());
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, pointRules, Set.of());
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertThrows(RewardNotFoundException.class, () -> service.apply(command));
@@ -86,7 +85,7 @@ class CreatePointMembershipServiceTest {
         when(rewardRepository.findAllById(rewardIds)).thenReturn(rewards);
         when(tierRepository.findAllById(tierIds)).thenReturn(tiers);
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertThrows(TierNotFoundException.class, () -> service.apply(command));
@@ -120,7 +119,7 @@ class CreatePointMembershipServiceTest {
         when(tier2.getRequiredPoints()).thenReturn(100);
         when(tier3.getRequiredPoints()).thenReturn(200);
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertThrows(RuntimeException.class, () -> service.apply(command));
@@ -141,7 +140,7 @@ class CreatePointMembershipServiceTest {
         when(rewardRepository.findAllById(rewardIds)).thenReturn(rewards);
         when(membershipRepository.save(any())).thenReturn(Optional.of(membershipId));
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules);
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, pointRules);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertNotNull(service.apply(command));
@@ -177,7 +176,7 @@ class CreatePointMembershipServiceTest {
         when(tier2.getRequiredPoints()).thenReturn(100);
         when(tier3.getRequiredPoints()).thenReturn(200);
 
-        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, new Date(), pointRules, tierIds);
+        CreatePointMembershipCommand command = new CreatePointMembershipCommand("name", userId, rewardIds, pointRules, tierIds);
         CreatePointMembershipService service = new CreatePointMembershipService(merchantRepository, rewardRepository, tierRepository, membershipRepository);
 
         assertNotNull(service.apply(command));
