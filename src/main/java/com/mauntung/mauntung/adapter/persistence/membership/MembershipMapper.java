@@ -28,7 +28,7 @@ public class MembershipMapper {
                 entity.getRewards().stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
                 entity.getCreatedAt(),
                 jsonMapper.readValue(entity.getRules(), PointRules.class)
-            );
+            ).id(entity.getId());
             Set<TierEntity> tierEntities = entity.getTiers();
             if (tierEntities != null) {
                 builder.tiers(tierEntities.stream().map(tierMapper::entityToModel).collect(Collectors.toSet()));
@@ -41,7 +41,7 @@ public class MembershipMapper {
                 entity.getRewards().stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
                 entity.getCreatedAt(),
                 jsonMapper.readValue(entity.getRules(), StampRules.class)
-            );
+            ).id(entity.getId());
             membership = builder.build();
         }
         return membership;
@@ -49,6 +49,7 @@ public class MembershipMapper {
 
     public MembershipEntity modelToEntity(Membership membership) throws JsonProcessingException {
         MembershipEntity.MembershipEntityBuilder builder = MembershipEntity.builder()
+            .id(membership.getId())
             .name(membership.getName())
             .merchant(merchantMapper.modelToEntity(membership.getMerchant()))
             .rewards(membership.getRewards().stream().map(rewardMapper::modelToEntity).collect(Collectors.toSet()));
