@@ -16,18 +16,15 @@ class PointRulesTest {
     static Integer redeemTtl = 1;
     static Integer pointClaimableDuration = 1;
     static Integer pointUsableDuration = 1;
-    static String distributionMethod = PointRules.DistributionMethod.POINT_CODE_GENERATION;
-    static Set<String> rewardClaimMethods = Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER);
+    static PointRules.DistributionMethod distributionMethod = PointRules.DistributionMethod.POINT_CODE_GENERATION;
+    static Set<PointRules.RewardClaimMethod> rewardClaimMethods = Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER);
     static PointGeneration pointGeneration = new PointGeneration(PointGeneration.Type.NOMINAL, 10, 10_000);
-    static Set<String> invalidRewardClaimMethods = Set.of("invalid", PointRules.RewardClaimMethod.BY_CUSTOMER);
 
     static Stream<Arguments> invalidArgsProvider() {
         return Stream.of(
             Arguments.arguments(-1, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
             Arguments.arguments(redeemTtl, -1, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
-            Arguments.arguments(redeemTtl, pointClaimableDuration, -1, distributionMethod, rewardClaimMethods, pointGeneration),
-            Arguments.arguments(redeemTtl, pointClaimableDuration, pointUsableDuration, "invalid", rewardClaimMethods, pointGeneration),
-            Arguments.arguments(redeemTtl, pointClaimableDuration, pointUsableDuration, distributionMethod, invalidRewardClaimMethods, pointGeneration)
+            Arguments.arguments(redeemTtl, pointClaimableDuration, -1, distributionMethod, rewardClaimMethods, pointGeneration)
         );
     }
 
@@ -41,7 +38,7 @@ class PointRulesTest {
 
     @ParameterizedTest
     @MethodSource("invalidArgsProvider")
-    void givenInvalidArgs_constructor_shouldThrowsException(Integer redeemTtl, Integer pointClaimableDuration, Integer pointUsableDuration, String distributionMethod, Set<String> rewardClaimMethods, PointGeneration pointGeneration) {
+    void givenInvalidArgs_constructor_shouldThrowsException(Integer redeemTtl, Integer pointClaimableDuration, Integer pointUsableDuration, PointRules.DistributionMethod distributionMethod, Set<PointRules.RewardClaimMethod> rewardClaimMethods, PointGeneration pointGeneration) {
         assertThrows(IllegalArgumentException.class, () -> new PointRules(redeemTtl, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration));
     }
 
