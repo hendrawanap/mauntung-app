@@ -17,11 +17,11 @@ public class CreateRewardRequest {
     @NotBlank(message = "Terms Condition must not be blank")
     private String termsCondition;
 
-    @Min(value = 0, message = "Cost must be larger than 0")
+    @Min(value = 0, message = "Cost must not be negative integer")
     @NotNull(message = "Cost must not be null")
     private Integer cost;
 
-    @Min(value = 0, message = "Stock must be larger than 0")
+    @Min(value = 0, message = "Stock must not be negative integer")
     private Integer stock;
 
     private String startPeriod;
