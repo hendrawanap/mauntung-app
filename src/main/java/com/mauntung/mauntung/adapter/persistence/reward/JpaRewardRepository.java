@@ -12,5 +12,5 @@ public interface JpaRewardRepository extends CrudRepository<RewardEntity, Long> 
     @Transactional
     @Modifying
     @Query("update RewardEntity r set r.membership.id = :membershipId where r.id in :ids")
-    void attachToMembership(@Param("membership") Long membershipId, @Param("ids") Collection<Long> ids);
+    void attachToMembership(@Param("membershipId") Long membershipId, @Param("ids") Collection<Long> ids);
 }
