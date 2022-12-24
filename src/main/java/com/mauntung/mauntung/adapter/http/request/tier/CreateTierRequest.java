@@ -9,16 +9,16 @@ import java.util.Set;
 
 @Data
 public class CreateTierRequest {
-    @NotBlank
+    @NotBlank(message = "Name must not be blank")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Reward Ids must not be null")
     private Set<Long> rewardIds;
 
-    @NotNull
-    @Min(0)
+    @NotNull(message = "Required Points must not be null")
+    @Min(value = 0, message = "Required Points must not be negative integer")
     private Integer requiredPoints;
 
-    @Min(0)
+    @Min(value = 0, message = "Required Points must not be negative number")
     private Float multiplierFactor;
 }
