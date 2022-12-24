@@ -11,10 +11,9 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointGenerationTest {
-    static final String type = PointGeneration.TYPE_NOMINAL;
+    static final PointGeneration.Type type = PointGeneration.Type.NOMINAL;
     static final int points = 10;
     static final int divider = 10_000;
-    static final String invalidType = "invalid";
 
     @BeforeEach
     void setUp() {
@@ -29,21 +28,16 @@ class PointGenerationTest {
         assertDoesNotThrow(() -> new PointGeneration(type, points, divider));
     }
 
-    @Test
-    void givenInvalidType_constructor_shouldThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> new PointGeneration(invalidType, points, divider));
-    }
-
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
     void givenLessThanOnePoints_constructor_shouldThrowsException(int points) {
-        assertThrows(IllegalArgumentException.class, () -> new PointGeneration(invalidType, points, divider));
+        assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
     void givenLessThanOneDivider_constructor_shouldThrowsException(int divider) {
-        assertThrows(IllegalArgumentException.class, () -> new PointGeneration(invalidType, points, divider));
+        assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 
     static IntStream lessThanOneIntegersProvider() {

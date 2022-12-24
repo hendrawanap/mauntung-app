@@ -119,7 +119,7 @@ class MembershipControllerTest {
             10,
             PointRules.DistributionMethod.POINT_CODE_GENERATION,
             Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER),
-            new PointGeneration(PointGeneration.TYPE_NOMINAL, 10, 10_000)
+            new PointGeneration(PointGeneration.Type.NOMINAL, 10, 10_000)
         );
         Set<Long> rewardIds = Set.of(1L, 2L, 3L);
         Set<Long> tierIds = Set.of(1L, 2L, 3L);

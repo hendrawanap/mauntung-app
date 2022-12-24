@@ -18,7 +18,7 @@ class PointRulesTest {
     static Integer pointUsableDuration = 1;
     static String distributionMethod = PointRules.DistributionMethod.POINT_CODE_GENERATION;
     static Set<String> rewardClaimMethods = Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER);
-    static PointGeneration pointGeneration = new PointGeneration(PointGeneration.TYPE_NOMINAL, 10, 10_000);
+    static PointGeneration pointGeneration = new PointGeneration(PointGeneration.Type.NOMINAL, 10, 10_000);
     static Set<String> invalidRewardClaimMethods = Set.of("invalid", PointRules.RewardClaimMethod.BY_CUSTOMER);
 
     static Stream<Arguments> invalidArgsProvider() {
