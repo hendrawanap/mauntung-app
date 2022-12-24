@@ -11,6 +11,6 @@ import java.util.Collection;
 public interface JpaRewardRepository extends CrudRepository<RewardEntity, Long> {
     @Transactional
     @Modifying
-    @Query("update RewardEntity r set r.membership.id = :membershipId where r.id in :ids")
+    @Query("update RewardEntity r set r.membership.id = :membershipId where r.id in :ids and r.membership is null")
     void attachToMembership(@Param("membershipId") Long membershipId, @Param("ids") Collection<Long> ids);
 }

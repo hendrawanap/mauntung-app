@@ -11,6 +11,6 @@ import java.util.Collection;
 public interface JpaTierRepository extends CrudRepository<TierEntity, Long> {
     @Transactional
     @Modifying
-    @Query("update RewardEntity r set r.membership.id = :membershipId where r.id in :ids")
+    @Query("update TierEntity t set t.membership.id = :membershipId where t.id in :ids and t.membership is null")
     void attachToMembership(@Param("membershipId") Long membershipId, @Param("ids") Collection<Long> ids);
 }
