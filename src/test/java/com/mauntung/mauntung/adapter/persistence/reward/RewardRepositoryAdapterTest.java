@@ -35,13 +35,13 @@ class RewardRepositoryAdapterTest {
     @Test
     void findAllById_shouldReturnRewards() {
         Set<Long> rewardIds = new HashSet<>();
-        RewardEntity rewardEntity = RewardEntity.builder()
-            .name("name")
-            .description("desc")
-            .termsCondition("terms")
-            .cost(10)
-            .build();
         for (int i = 0; i < 3; i++) {
+            RewardEntity rewardEntity = RewardEntity.builder()
+                .name("name")
+                .description("desc")
+                .termsCondition("terms")
+                .cost(10)
+                .build();
             rewardIds.add(entityManager.persist(rewardEntity).getId());
         }
         entityManager.flush();
