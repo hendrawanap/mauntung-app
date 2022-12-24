@@ -28,6 +28,11 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
     @Override
     public CreatePointMembershipResponse apply(CreatePointMembershipCommand command) throws MerchantNotFoundException, RewardNotFoundException, TierNotFoundException, IllegalArgumentException {
         Merchant merchant = findMerchantByUserId(command.getUserId());
+
+        if (isCreatedMembership(merchant.getId())) {
+            throw new IllegalStateException("Already created membership");
+        }
+
         Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
 
         Set<Tier> tiers = null;
@@ -44,6 +49,10 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
         if (hasTiers) attachTiersToMembership(tiers, membershipId);
 
         return buildResponse(membershipId, membership);
+    }
+
+    private boolean isCreatedMembership(long merchantId) {
+        return membershipRepository.isExistsByMerchantId(merchantId);
     }
 
     private Merchant findMerchantByUserId(long userId) throws MerchantNotFoundException {

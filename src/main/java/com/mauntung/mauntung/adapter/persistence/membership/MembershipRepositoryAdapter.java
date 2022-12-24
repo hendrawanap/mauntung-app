@@ -32,4 +32,9 @@ public class MembershipRepositoryAdapter implements MembershipRepository {
 
         return Optional.of(entity.getId());
     }
+
+    @Override
+    public boolean isExistsByMerchantId(Long merchantId) {
+        return jpaRepository.isExistsByMerchantId(merchantId);
+    }
 }

@@ -6,4 +6,6 @@ import java.util.Optional;
 
 public interface MembershipRepository {
     Optional<Long> save(Membership membership);
+
+    boolean isExistsByMerchantId(Long merchantId);
 }

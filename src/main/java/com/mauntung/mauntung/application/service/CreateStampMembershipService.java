@@ -31,6 +31,11 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
     @Override
     public CreateStampMembershipResponse apply(CreateStampMembershipCommand command) {
         Merchant merchant = findMerchantByUserId(command.getUserId());
+
+        if (isCreatedMembership(merchant.getId())) {
+            throw new IllegalStateException("Already created membership");
+        }
+
         Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
 
         StampMembership membership = buildStampMembership(command, merchant, rewards);
@@ -39,6 +44,10 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
         attachRewardsToMembership(rewards, membershipId);
 
         return buildResponse(membershipId, membership);
+    }
+
+    private boolean isCreatedMembership(long merchantId) {
+        return membershipRepository.isExistsByMerchantId(merchantId);
     }
 
     private Merchant findMerchantByUserId(long userId) throws MerchantNotFoundException {
