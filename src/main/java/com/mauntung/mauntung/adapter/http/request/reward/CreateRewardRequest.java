@@ -8,20 +8,20 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class CreateRewardRequest {
-    @NotBlank
+    @NotBlank(message = "Name must not be blank")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Description must not be blank")
     private String description;
 
-    @NotBlank
+    @NotBlank(message = "Terms Condition must not be blank")
     private String termsCondition;
 
-    @Min(0)
-    @NotNull
+    @Min(value = 0, message = "Cost must be larger than 0")
+    @NotNull(message = "Cost must not be null")
     private Integer cost;
 
-    @Min(0)
+    @Min(value = 0, message = "Stock must be larger than 0")
     private Integer stock;
 
     private String startPeriod;
