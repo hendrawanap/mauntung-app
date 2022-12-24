@@ -8,13 +8,13 @@ import java.util.Set;
 
 @Data
 public class CreateMembershipRequest {
-    @NotBlank
+    @NotBlank(message = "Name must not be blank")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Type must not be blank")
     private String type;
 
-    @NotNull
+    @NotNull(message = "Rules must not be null")
     private Rules rules;
 
     @NotNull
