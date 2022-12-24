@@ -14,6 +14,7 @@ public class RewardMapper {
             entity.getTermsCondition(),
             entity.getCost()
         )
+            .id(entity.getId())
             .stock(entity.getStock())
             .startPeriod(entity.getStartPeriod())
             .endPeriod(entity.getEndPeriod())
