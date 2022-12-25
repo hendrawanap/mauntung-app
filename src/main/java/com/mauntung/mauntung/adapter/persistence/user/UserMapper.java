@@ -11,7 +11,7 @@ public class UserMapper {
         return userFactory.createWithId(
             entity.getEmail(),
             entity.getPassword(),
-            entity.getRole(),
+            User.Role.valueOf(entity.getRole().toUpperCase()),
             entity.getCreatedAt(),
             entity.getId()
         );
@@ -20,7 +20,7 @@ public class UserMapper {
     public UserEntity modelToEntity(User user) {
         return UserEntity.builder()
             .id(user.getId())
-            .role(user.getRole())
+            .role(user.getRole().toString())
             .email(user.getEmail())
             .password(user.getPassword())
             .createdAt(user.getCreatedAt())

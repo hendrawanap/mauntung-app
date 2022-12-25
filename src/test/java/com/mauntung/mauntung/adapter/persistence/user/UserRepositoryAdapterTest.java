@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryAdapterTest {
-
     @Autowired
     private TestEntityManager entityManager;
 
@@ -62,7 +61,7 @@ class UserRepositoryAdapterTest {
     @Test
     void save_shouldReturnId() {
         UserFactory userFactory = new UserFactoryImpl();
-        User user = userFactory.createWithoutId("merchant@mail.com", "password", "merchant", new Date());
+        User user = userFactory.createWithoutId("merchant@mail.com", "password", User.Role.MERCHANT, new Date());
         UserRepository userRepository = new UserRepositoryAdapter(jpaUserRepository);
 
         Optional<Long> userId = userRepository.save(user);

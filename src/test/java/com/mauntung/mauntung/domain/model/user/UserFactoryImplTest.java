@@ -17,7 +17,7 @@ class UserFactoryImplTest {
     static String password = "password";
     static Date createdAt = new Date();
     static Long id = 1L;
-    static String role = User.Role.MERCHANT;
+    static User.Role role = User.Role.MERCHANT;
 
     @BeforeEach
     void setUp() {

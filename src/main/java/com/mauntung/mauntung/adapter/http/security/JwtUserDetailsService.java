@@ -24,14 +24,15 @@ public class JwtUserDetailsService implements UserDetailsService {
         try {
             User user = userRepository.findByEmail(email).orElseThrow(NullPointerException::new);
             List<GrantedAuthority> authorityList = new ArrayList<>();
-            if (user.getRole().equals(User.Role.MERCHANT)) {
-                authorityList.add(new SimpleGrantedAuthority("ROLE_MERCHANT"));
-            } else if (user.getRole().equals(User.Role.CUSTOMER)) {
-                authorityList.add(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-            }
+            authorityList.add(buildSimpleGrantedAuthorityFromUserRole(user.getRole()));
             return new UserDetailsImpl(user.getId(), user.getEmail(), user.getEmail(), user.getPassword(), authorityList);
         } catch (NullPointerException e) {
             throw new UsernameNotFoundException("User Not Found");
         }
+    }
+
+    private SimpleGrantedAuthority buildSimpleGrantedAuthorityFromUserRole(User.Role role) {
+        String prefixedStringRole = String.format("ROLE_%s", role.toString().toUpperCase());
+        return new SimpleGrantedAuthority(prefixedStringRole);
     }
 }
