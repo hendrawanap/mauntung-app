@@ -1,10 +1,10 @@
 package com.mauntung.mauntung.adapter.http.controller;
 
 import com.mauntung.mauntung.adapter.http.request.membership.CreateMembershipRequest;
+import com.mauntung.mauntung.adapter.http.request.membership.mapper.CreateMembershipRequestMapper;
 import com.mauntung.mauntung.adapter.http.response.membership.CreateMembershipResponseBody;
 import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
 import com.mauntung.mauntung.application.port.membership.*;
-import com.mauntung.mauntung.domain.model.membership.StampRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +23,7 @@ public class MembershipController {
     private final CreatePointMembershipUseCase createPointMembershipUseCase;
     private final CreateStampMembershipUseCase createStampMembershipUseCase;
     private final JwtTokenService jwtTokenService;
+    private final CreateMembershipRequestMapper createMembershipRequestMapper = new CreateMembershipRequestMapper();
 
     @PreAuthorize("hasRole('MERCHANT')")
     @PostMapping("merchant/membership")
@@ -48,24 +49,16 @@ public class MembershipController {
     }
 
     private CreatePointMembershipCommand buildCreatePointMembershipCommand(CreateMembershipRequest request, Long userId) {
-        return new CreatePointMembershipCommand(
-            request.getName(),
-            userId,
-            request.getRewardIds(),
-            request.getRules().getPoint(),
-            request.getTierIds()
-        );
+        if (request.getRules().getPoint() == null)
+            throw new IllegalArgumentException("rules.point must not be null");
+
+        return createMembershipRequestMapper.mapToCreatePointMembershipCommand(request, userId);
     }
 
     private CreateStampMembershipCommand buildCreateStampMembershipCommand(CreateMembershipRequest request, Long userId) {
-        StampRules rules = request.getRules().getStamp();
-        return new CreateStampMembershipCommand(
-            request.getName(),
-            userId,
-            request.getRewardIds(),
-            rules.getRedeemTtl(),
-            rules.getUsableDuration(),
-            rules.getCardCapacity()
-        );
+        if (request.getRules().getStamp() == null)
+            throw new IllegalArgumentException("rules.stamp must not be null");
+
+        return createMembershipRequestMapper.mapToCreateStampMembershipCommand(request, userId);
     }
 }

@@ -1,11 +1,14 @@
 package com.mauntung.mauntung.adapter.http.request.membership;
 
-import com.mauntung.mauntung.domain.model.membership.PointRules;
-import com.mauntung.mauntung.domain.model.membership.StampRules;
 import lombok.Data;
+
+import javax.validation.Valid;
 
 @Data
 public class Rules {
+    @Valid
     private PointRules point;
+
+    @Valid
     private StampRules stamp;
 }
