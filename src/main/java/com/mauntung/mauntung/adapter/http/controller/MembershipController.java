@@ -5,6 +5,7 @@ import com.mauntung.mauntung.adapter.http.request.membership.mapper.CreateMember
 import com.mauntung.mauntung.adapter.http.response.membership.CreateMembershipResponseBody;
 import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
 import com.mauntung.mauntung.application.port.membership.*;
+import com.mauntung.mauntung.domain.model.membership.Membership;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +30,14 @@ public class MembershipController {
     @PostMapping("merchant/membership")
     public ResponseEntity<CreateMembershipResponseBody> createMembership(@RequestBody @Valid CreateMembershipRequest request, Authentication authentication) {
         Long userId = getUserIdFromAuthentication(authentication);
+        boolean isPointMembership = request.getType().equalsIgnoreCase(Membership.Type.POINT.toString());
+        boolean isStampMembership = request.getType().equalsIgnoreCase(Membership.Type.STAMP.toString());
 
-        if (request.getType().equalsIgnoreCase("point")) {
+        if (isPointMembership) {
             CreatePointMembershipCommand command = buildCreatePointMembershipCommand(request, userId);
             CreatePointMembershipResponse response = createPointMembershipUseCase.apply(command);
             return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
-        } else if (request.getType().equalsIgnoreCase("stamp")) {
+        } else if (isStampMembership) {
             CreateStampMembershipCommand command = buildCreateStampMembershipCommand(request, userId);
             CreateStampMembershipResponse response = createStampMembershipUseCase.apply(command);
             return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
