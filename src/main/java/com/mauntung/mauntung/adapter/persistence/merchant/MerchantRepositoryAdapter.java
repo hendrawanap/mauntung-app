@@ -3,11 +3,11 @@ package com.mauntung.mauntung.adapter.persistence.merchant;
 import com.mauntung.mauntung.application.port.merchant.MerchantRepository;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class MerchantRepositoryAdapter implements MerchantRepository {
     private final JpaMerchantRepository jpaRepository;

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mauntung.mauntung.application.port.membership.MembershipRepository;
 import com.mauntung.mauntung.domain.model.membership.Membership;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class MembershipRepositoryAdapter implements MembershipRepository {
     private final JpaMembershipRepository jpaRepository;

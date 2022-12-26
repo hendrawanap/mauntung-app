@@ -3,14 +3,14 @@ package com.mauntung.mauntung.adapter.persistence.tier;
 import com.mauntung.mauntung.application.port.tier.TierRepository;
 import com.mauntung.mauntung.domain.model.membership.Tier;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class TierRepositoryAdapter implements TierRepository {
     private final JpaTierRepository jpaRepository;

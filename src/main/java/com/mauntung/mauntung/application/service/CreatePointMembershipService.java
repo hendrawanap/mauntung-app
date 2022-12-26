@@ -11,12 +11,12 @@ import com.mauntung.mauntung.domain.model.membership.*;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Set;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CreatePointMembershipService implements CreatePointMembershipUseCase {
     private final MerchantRepository merchantRepository;

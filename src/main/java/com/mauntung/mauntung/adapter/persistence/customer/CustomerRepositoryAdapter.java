@@ -3,12 +3,12 @@ package com.mauntung.mauntung.adapter.persistence.customer;
 import com.mauntung.mauntung.application.port.customer.CustomerRepository;
 import com.mauntung.mauntung.domain.model.customer.Customer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class CustomerRepositoryAdapter implements CustomerRepository {
     private final JpaCustomerRepository jpaRepository;

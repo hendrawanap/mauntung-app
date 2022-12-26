@@ -8,11 +8,11 @@ import com.mauntung.mauntung.domain.model.reward.Reward;
 import com.mauntung.mauntung.domain.model.reward.RewardFactory;
 import com.mauntung.mauntung.domain.model.reward.RewardFactoryImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CreateRewardService implements CreateRewardUseCase {
     private final RewardRepository rewardRepository;

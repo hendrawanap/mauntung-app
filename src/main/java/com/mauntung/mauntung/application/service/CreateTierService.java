@@ -11,11 +11,11 @@ import com.mauntung.mauntung.domain.model.membership.TierFactory;
 import com.mauntung.mauntung.domain.model.membership.TierFactoryImpl;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class CreateTierService implements CreateTierUseCase {
     private final TierFactory tierFactory = new TierFactoryImpl();

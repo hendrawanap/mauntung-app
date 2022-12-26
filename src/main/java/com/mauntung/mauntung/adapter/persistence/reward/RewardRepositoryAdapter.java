@@ -3,14 +3,14 @@ package com.mauntung.mauntung.adapter.persistence.reward;
 import com.mauntung.mauntung.application.port.reward.RewardRepository;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class RewardRepositoryAdapter implements RewardRepository {
     private final JpaRewardRepository jpaRepository;

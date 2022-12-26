@@ -3,11 +3,11 @@ package com.mauntung.mauntung.adapter.persistence.user;
 import com.mauntung.mauntung.application.port.user.UserRepository;
 import com.mauntung.mauntung.domain.model.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Component
+@Repository
 @RequiredArgsConstructor
 public class UserRepositoryAdapter implements UserRepository {
     private final JpaUserRepository jpaRepository;
