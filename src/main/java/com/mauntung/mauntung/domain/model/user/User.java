@@ -14,13 +14,9 @@ public class User {
     private final String password;
     private final Role role;
     private final Date createdAt;
+
     public enum Role {
         MERCHANT,
-        CUSTOMER;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
+        CUSTOMER
     }
 }

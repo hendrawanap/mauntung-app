@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.domain.model.membership;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.mauntung.mauntung.domain.common.MessageBuilder;
 import lombok.Getter;
 
@@ -46,9 +47,18 @@ public class PointRules {
         public final String label;
 
         DistributionMethod(String label) {
-            this.label = label;
+            this.label = label.toUpperCase();
         }
 
+        public static DistributionMethod fromStringLabel(String label) {
+            for (DistributionMethod constant : DistributionMethod.values()) {
+                if (constant.label.equalsIgnoreCase(label))
+                    return constant;
+            }
+            throw new IllegalArgumentException(String.format("No enum constant %s.%s", DistributionMethod.class, label));
+        }
+
+        @JsonValue
         @Override
         public String toString() {
             return label;
@@ -62,9 +72,18 @@ public class PointRules {
         public final String label;
 
         RewardClaimMethod(String label) {
-            this.label = label;
+            this.label = label.toUpperCase();
         }
 
+        public static RewardClaimMethod fromStringLabel(String label) {
+            for (RewardClaimMethod constant : RewardClaimMethod.values()) {
+                if (constant.label.equalsIgnoreCase(label))
+                    return constant;
+            }
+            throw new IllegalArgumentException(String.format("No enum constant %s.%s", RewardClaimMethod.class, label));
+        }
+
+        @JsonValue
         @Override
         public String toString() {
             return label;

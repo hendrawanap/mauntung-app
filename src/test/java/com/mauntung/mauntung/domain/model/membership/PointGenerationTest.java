@@ -40,6 +40,13 @@ class PointGenerationTest {
         assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 
+    @Test
+    void typeEnum_toString_shouldReturnName() {
+        assertEquals("NOMINAL", PointGeneration.Type.NOMINAL.toString());
+        assertEquals("ITEM", PointGeneration.Type.ITEM.toString());
+        assertEquals("FIXED", PointGeneration.Type.FIXED.toString());
+    }
+
     static IntStream lessThanOneIntegersProvider() {
         return IntStream.range(-10, 1);
     }

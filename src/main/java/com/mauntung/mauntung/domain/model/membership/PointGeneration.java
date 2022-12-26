@@ -29,11 +29,6 @@ public class PointGeneration {
     public enum Type {
         NOMINAL,
         ITEM,
-        FIXED;
-
-        @Override
-        public String toString() {
-            return this.name().toLowerCase();
-        }
+        FIXED
     }
 }
