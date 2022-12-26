@@ -1,6 +1,7 @@
 package com.mauntung.mauntung.adapter.http.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.*;
@@ -14,6 +15,9 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenService {
+    @Value("${jwt.token.ttl}")
+    private Long TOKEN_TTL = 60L;
+
     private final JwtEncoder encoder;
     private final JwtDecoder decoder;
 
@@ -26,7 +30,7 @@ public class JwtTokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuer("self")
             .issuedAt(now)
-            .expiresAt(now.plus(1, ChronoUnit.HOURS))
+            .expiresAt(now.plus(TOKEN_TTL, ChronoUnit.MINUTES))
             .subject(authentication.getName())
             .claim("scope", scope)
             .claim("userId", userId)
