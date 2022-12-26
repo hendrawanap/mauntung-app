@@ -22,4 +22,9 @@ public interface Membership {
     String getImg();
 
     Integer getRewardsQty();
+
+    enum Type {
+        POINT,
+        STAMP
+    }
 }
