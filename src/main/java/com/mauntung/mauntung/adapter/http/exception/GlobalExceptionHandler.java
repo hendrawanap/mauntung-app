@@ -1,9 +1,9 @@
 package com.mauntung.mauntung.adapter.http.exception;
 
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errors = ex.getBindingResult()
             .getFieldErrors()
             .stream()
-            .map(DefaultMessageSourceResolvable::getDefaultMessage)
+            .map(this::buildErrorMessageFromFieldError)
             .collect(Collectors.toList());
 
         body.put("errors", errors);
@@ -37,5 +37,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Map<String, List<String>> body = new HashMap<>();
         body.put("errors", List.of(ex.getMessage()));
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    private String buildErrorMessageFromFieldError(FieldError error) {
+        return String.format("%s %s", error.getField(), error.getDefaultMessage());
     }
 }
