@@ -9,9 +9,11 @@ import java.util.Date;
 @Getter
 public class CreateRewardResponseBody {
     private final Data data;
+    private final String message;
 
     public CreateRewardResponseBody(CreateRewardResponse response) {
         data = new Data(response.getId(), response.getCreatedAt());
+        message = response.getMessage();
     }
 
     @Getter

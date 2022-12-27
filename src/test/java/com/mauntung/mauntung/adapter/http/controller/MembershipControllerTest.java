@@ -74,13 +74,13 @@ class MembershipControllerTest {
         return jsonMapper.writeValueAsString(requestMap);
     }
 
-    private static String buildCreateStampMembershipRequestBody(String name, String type, Integer stampTtl, Integer redeemTtl, Integer cardCapacity, Set<Long> rewardIds, Long mediaId) throws JsonProcessingException {
+    private static String buildCreateStampMembershipRequestBody(String name, String type, Integer usableDuration, Integer redeemTtl, Integer cardCapacity, Set<Long> rewardIds, Long mediaId) throws JsonProcessingException {
         Map<String, Object> requestMap = new HashMap<>(Map.of(
             "name", name,
             "type", type,
             "rules", Map.of(
                 "stamp", Map.of(
-                    "stampTtl", stampTtl,
+                    "usableDuration", usableDuration,
                     "redeemTtl", redeemTtl,
                     "cardCapacity", cardCapacity
                 )

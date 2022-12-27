@@ -2,6 +2,7 @@ package com.mauntung.mauntung.adapter.http.controller;
 
 import com.mauntung.mauntung.adapter.http.request.reward.CreateRewardRequest;
 import com.mauntung.mauntung.adapter.http.response.reward.CreateRewardResponseBody;
+import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
 import com.mauntung.mauntung.application.port.reward.CreateRewardCommand;
 import com.mauntung.mauntung.application.port.reward.CreateRewardResponse;
 import com.mauntung.mauntung.application.port.reward.CreateRewardUseCase;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,21 +25,24 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class RewardController {
     private final CreateRewardUseCase createRewardUseCase;
+    private final JwtTokenService jwtTokenService;
 
     @PreAuthorize("hasRole('MERCHANT')")
     @PostMapping("merchant/rewards")
-    public ResponseEntity<CreateRewardResponseBody> createReward(@RequestBody @Valid CreateRewardRequest request) {
-        CreateRewardCommand command = buildCreateRewardCommand(request);
+    public ResponseEntity<CreateRewardResponseBody> createReward(@RequestBody @Valid CreateRewardRequest request, Authentication authentication) {
+        Long userId = getUserIdFromAuthentication(authentication);
+        CreateRewardCommand command = buildCreateRewardCommand(request, userId);
         CreateRewardResponse response = createRewardUseCase.apply(command);
         return new ResponseEntity<>(new CreateRewardResponseBody(response), HttpStatus.CREATED);
     }
 
-    private CreateRewardCommand buildCreateRewardCommand(CreateRewardRequest request) {
+    private CreateRewardCommand buildCreateRewardCommand(CreateRewardRequest request, long userId) {
         CreateRewardCommand.Builder commandBuilder = CreateRewardCommand.builder(
             request.getName(),
             request.getDescription(),
             request.getTermsCondition(),
-            request.getCost()
+            request.getCost(),
+            userId
         ).stock(request.getStock());
 
         boolean startPeriodIsProvided = request.getStartPeriod() != null && !request.getStartPeriod().equals("");
@@ -60,5 +66,10 @@ public class RewardController {
     private Date parseStringDateToDate(String stringDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");
         return formatter.parse(stringDate);
+    }
+
+    private Long getUserIdFromAuthentication(Authentication authentication) {
+        Jwt principal = (Jwt) authentication.getPrincipal();
+        return jwtTokenService.getUserId(principal);
     }
 }

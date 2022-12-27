@@ -2,12 +2,12 @@ package com.mauntung.mauntung.adapter.http.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
 import com.mauntung.mauntung.application.port.reward.CreateRewardResponse;
 import com.mauntung.mauntung.application.port.reward.CreateRewardUseCase;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -21,10 +21,10 @@ import java.util.stream.Stream;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 
 
 @WebMvcTest({ RewardController.class })
-@AutoConfigureMockMvc(addFilters = false)
 class RewardControllerTest {
     private static final String MERCHANT_REWARDS_URL = "/merchant/rewards";
     private static final ObjectMapper jsonMapper = new ObjectMapper();
@@ -34,6 +34,9 @@ class RewardControllerTest {
 
     @MockBean
     private CreateRewardUseCase createRewardUseCase;
+
+    @MockBean
+    private JwtTokenService jwtTokenService;
 
     private static String prepareCreateRewardRequestBody(String name, String description, String termsCondition, Integer cost, Integer stock, String startPeriod, String endPeriod) throws JsonProcessingException {
         Map<String, Object> requestMap = new HashMap<>(Map.of(
@@ -92,12 +95,14 @@ class RewardControllerTest {
     @ParameterizedTest
     @MethodSource("validCreateRewardRequestBodyProvider")
     void givenValidArgs_createReward_shouldReturnCreatedStatus(String requestBody) throws Exception {
-        when(createRewardUseCase.apply(any())).thenReturn(new CreateRewardResponse(1L, new Date()));
+        when(jwtTokenService.getUserId(any())).thenReturn(1L);
+        when(createRewardUseCase.apply(any())).thenReturn(new CreateRewardResponse(1L, new Date(), "success"));
 
         mvc.perform(
             post(MERCHANT_REWARDS_URL)
                 .content(requestBody)
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(jwt())
         )
             .andExpect(status().isCreated())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -110,6 +115,7 @@ class RewardControllerTest {
                 post(MERCHANT_REWARDS_URL)
                     .content(requestBody)
                     .contentType(MediaType.APPLICATION_JSON)
+                    .with(jwt())
             )
             .andExpect(status().isBadRequest())
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));

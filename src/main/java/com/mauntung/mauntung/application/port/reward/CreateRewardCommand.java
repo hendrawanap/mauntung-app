@@ -16,9 +16,10 @@ public class CreateRewardCommand {
     private final Integer stock;
     private final Date startPeriod;
     private final Date endPeriod;
+    private final long userId;
 
-    public static Builder builder(String name, String description, String termsCondition, int cost) {
-        return new Builder(name, description, termsCondition, cost);
+    public static Builder builder(String name, String description, String termsCondition, int cost, long userId) {
+        return new Builder(name, description, termsCondition, cost, userId);
     }
 
     @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class CreateRewardCommand {
         private Integer stock;
         private Date startPeriod;
         private Date endPeriod;
+        private final long userId;
 
         public Builder stock(Integer stock) {
             this.stock = stock;
@@ -43,7 +45,7 @@ public class CreateRewardCommand {
         }
 
         public CreateRewardCommand build() {
-            return new CreateRewardCommand(name, description, termsCondition, cost, stock, startPeriod, endPeriod);
+            return new CreateRewardCommand(name, description, termsCondition, cost, stock, startPeriod, endPeriod, userId);
         }
     }
 }

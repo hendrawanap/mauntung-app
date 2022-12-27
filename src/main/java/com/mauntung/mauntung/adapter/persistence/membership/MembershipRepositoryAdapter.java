@@ -6,6 +6,7 @@ import com.mauntung.mauntung.domain.model.membership.Membership;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Repository
@@ -36,5 +37,18 @@ public class MembershipRepositoryAdapter implements MembershipRepository {
     @Override
     public boolean isExistsByMerchantId(Long merchantId) {
         return jpaRepository.isExistsByMerchantId(merchantId);
+    }
+
+    @Override
+    public Optional<Membership> findByUserId(Long userId) throws JsonProcessingException {
+        MembershipEntity entity;
+
+        try {
+            entity = jpaRepository.findByUserId(userId).orElseThrow();
+        } catch (NoSuchElementException ex) {
+            return Optional.empty();
+        }
+
+        return Optional.of(mapper.entityToModel(entity));
     }
 }

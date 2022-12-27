@@ -10,4 +10,5 @@ import java.util.Date;
 public class CreateRewardResponse {
     private final Long id;
     private final Date createdAt;
+    private final String message;
 }
