@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.mauntung.mauntung.domain.common.MessageBuilder;
 import lombok.Getter;
 
+import java.beans.ConstructorProperties;
 import java.util.Set;
 
 @Getter
@@ -15,6 +16,7 @@ public class PointRules {
     private final Set<RewardClaimMethod> rewardClaimMethods;
     private final PointGeneration pointGeneration;
 
+    @ConstructorProperties({"redeemTtl", "pointClaimableDuration", "pointUsableDuration", "distributionMethod", "rewardClaimMethods", "pointGeneration"})
     public PointRules(int redeemTtl, int pointClaimableDuration, int pointUsableDuration, DistributionMethod distributionMethod, Set<RewardClaimMethod> rewardClaimMethods, PointGeneration pointGeneration) throws IllegalArgumentException {
         validate(redeemTtl, pointClaimableDuration, pointUsableDuration, rewardClaimMethods);
 

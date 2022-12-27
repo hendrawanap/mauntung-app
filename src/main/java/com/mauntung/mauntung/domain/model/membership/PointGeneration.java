@@ -3,12 +3,15 @@ package com.mauntung.mauntung.domain.model.membership;
 import com.mauntung.mauntung.domain.common.MessageBuilder;
 import lombok.Getter;
 
+import java.beans.ConstructorProperties;
+
 @Getter
 public class PointGeneration {
     private final Type type;
     private final int points;
     private final int divider;
 
+    @ConstructorProperties({"type", "points", "divider"})
     public PointGeneration(Type type, int points, int divider) throws IllegalArgumentException {
         validate(points, divider);
         this.type = type;

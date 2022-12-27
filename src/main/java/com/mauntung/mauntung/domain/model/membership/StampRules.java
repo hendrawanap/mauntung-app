@@ -3,12 +3,15 @@ package com.mauntung.mauntung.domain.model.membership;
 import com.mauntung.mauntung.domain.common.MessageBuilder;
 import lombok.Getter;
 
+import java.beans.ConstructorProperties;
+
 @Getter
 public class StampRules {
     private final int redeemTtl;
     private final int usableDuration;
     private final int cardCapacity;
 
+    @ConstructorProperties({"redeemTtl", "usableDuration", "cardCapacity"})
     public StampRules(int redeemTtl, int usableDuration, int cardCapacity) throws IllegalArgumentException {
         validate(redeemTtl, usableDuration, cardCapacity);
         this.redeemTtl = redeemTtl;
