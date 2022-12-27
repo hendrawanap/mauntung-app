@@ -23,13 +23,13 @@ class StampRulesTest {
     }
 
     @ParameterizedTest
-    @MethodSource("zeroOrPositiveIntegersStream")
+    @MethodSource("positiveIntegersStream")
     void givenZeroOrPositiveRedeemTtl_constructor_shouldNotThrowsException(int redeemTtl) {
         assertDoesNotThrow(() -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
     @ParameterizedTest
-    @MethodSource("zeroOrPositiveIntegersStream")
+    @MethodSource("positiveIntegersStream")
     void givenZeroOrPositiveUsableDuration_constructor_shouldNotThrowsException(int usableDuration) {
         assertDoesNotThrow(() -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
@@ -52,8 +52,8 @@ class StampRulesTest {
         assertThrows(IllegalArgumentException.class, () -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
-    static IntStream zeroOrPositiveIntegersStream() {
-        return IntStream.range(0, 10);
+    static IntStream positiveIntegersStream() {
+        return IntStream.range(1, 10);
     }
 
     static IntStream lessThanOneIntegersProvider() {
