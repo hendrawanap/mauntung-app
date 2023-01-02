@@ -23,7 +23,7 @@ public class CreateMembershipResponseBody {
         data.put("id", response.getId());
         data.put("name", response.getName());
         data.put("rewardsQty", response.getRewardsQty());
-        data.put("cardCapacitt", response.getCardCapacity());
+        data.put("cardCapacity", response.getCardCapacity());
         data.put("createdAt", response.getCreatedAt());
     }
 }
