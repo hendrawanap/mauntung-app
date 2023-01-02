@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +33,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, headers, HttpStatus.BAD_REQUEST, request);
     }
 
-    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
+    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class, ConstraintViolationException.class })
     protected ResponseEntity<Object> handleIllegalArgument(RuntimeException ex, WebRequest request) {
         Map<String, List<String>> body = new HashMap<>();
         body.put("errors", List.of(ex.getMessage()));
+
+        if (ex instanceof ConstraintViolationException) {
+            body.put("errors", buildErrorMessagesFromConstraintViolationExceptionMessage(ex.getMessage()));
+        }
+
         return handleExceptionInternal(ex, body, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     private String buildErrorMessageFromFieldError(FieldError error) {
         return String.format("%s %s", error.getField(), error.getDefaultMessage());
+    }
+
+    private List<String> buildErrorMessagesFromConstraintViolationExceptionMessage(String message) {
+        return List.of(message.split(", "));
     }
 }

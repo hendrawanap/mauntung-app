@@ -2,29 +2,30 @@ package com.mauntung.mauntung.adapter.http.controller;
 
 import com.mauntung.mauntung.adapter.http.request.reward.CreateRewardRequest;
 import com.mauntung.mauntung.adapter.http.response.reward.CreateRewardResponseBody;
+import com.mauntung.mauntung.adapter.http.response.reward.ListMembershipRewardsResponseBody;
 import com.mauntung.mauntung.adapter.http.security.JwtTokenService;
-import com.mauntung.mauntung.application.port.reward.CreateRewardCommand;
-import com.mauntung.mauntung.application.port.reward.CreateRewardResponse;
-import com.mauntung.mauntung.application.port.reward.CreateRewardUseCase;
+import com.mauntung.mauntung.application.port.reward.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class RewardController {
     private final CreateRewardUseCase createRewardUseCase;
+    private final ListMembershipRewardsUseCase listMembershipRewardsUseCase;
     private final JwtTokenService jwtTokenService;
 
     @PreAuthorize("hasRole('MERCHANT')")
@@ -34,6 +35,20 @@ public class RewardController {
         CreateRewardCommand command = buildCreateRewardCommand(request, userId);
         CreateRewardResponse response = createRewardUseCase.apply(command);
         return new ResponseEntity<>(new CreateRewardResponseBody(response), HttpStatus.CREATED);
+    }
+
+    @PreAuthorize("hasRole('MERCHANT')")
+    @GetMapping("merchant/rewards")
+    public ResponseEntity<ListMembershipRewardsResponseBody> listMembershipRewards(
+        @RequestParam(required = false) @PositiveOrZero Integer maxCost,
+        @RequestParam(required = false) @PositiveOrZero Integer minCost,
+        @RequestParam(required = false, name = "q") String requestQuery,
+        Authentication authentication
+    ) {
+        Long userId = getUserIdFromAuthentication(authentication);
+        ListMembershipRewardsQuery query = buildListMembershipRewardsQuery(maxCost, minCost, requestQuery, userId);
+        ListMembershipRewardsResponse response = listMembershipRewardsUseCase.apply(query);
+        return ResponseEntity.ok(new ListMembershipRewardsResponseBody(response));
     }
 
     private CreateRewardCommand buildCreateRewardCommand(CreateRewardRequest request, long userId) {
@@ -66,6 +81,14 @@ public class RewardController {
     private Date parseStringDateToDate(String stringDate) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-M-dd");
         return formatter.parse(stringDate);
+    }
+
+    private ListMembershipRewardsQuery buildListMembershipRewardsQuery(Integer maxCost, Integer minCost, String query, long userId) {
+        return ListMembershipRewardsQuery.builder(userId)
+            .maxCost(maxCost)
+            .minCost(minCost)
+            .query(query)
+            .build();
     }
 
     private Long getUserIdFromAuthentication(Authentication authentication) {
