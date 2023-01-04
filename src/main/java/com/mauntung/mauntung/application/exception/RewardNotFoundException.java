@@ -1,6 +1,8 @@
 package com.mauntung.mauntung.application.exception;
 
-public class RewardNotFoundException extends RuntimeException {
+import java.util.NoSuchElementException;
+
+public class RewardNotFoundException extends NoSuchElementException {
     public RewardNotFoundException() {
         super("Reward Not Found");
     }

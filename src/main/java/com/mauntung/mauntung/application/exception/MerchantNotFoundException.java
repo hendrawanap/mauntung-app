@@ -1,6 +1,8 @@
 package com.mauntung.mauntung.application.exception;
 
-public class MerchantNotFoundException extends RuntimeException {
+import java.util.NoSuchElementException;
+
+public class MerchantNotFoundException extends NoSuchElementException {
     public MerchantNotFoundException() {
         super("Merchant Not Found");
     }

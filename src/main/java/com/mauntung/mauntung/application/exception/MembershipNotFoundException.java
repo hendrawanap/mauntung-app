@@ -1,6 +1,8 @@
 package com.mauntung.mauntung.application.exception;
 
-public class MembershipNotFoundException extends RuntimeException {
+import java.util.NoSuchElementException;
+
+public class MembershipNotFoundException extends NoSuchElementException {
     public MembershipNotFoundException() {
         super("Membership Not Found");
     }

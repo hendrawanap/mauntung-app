@@ -1,6 +1,8 @@
 package com.mauntung.mauntung.application.exception;
 
-public class TierNotFoundException extends RuntimeException {
+import java.util.NoSuchElementException;
+
+public class TierNotFoundException extends NoSuchElementException {
     public TierNotFoundException() {
         super("Tier Not Found");
     }
