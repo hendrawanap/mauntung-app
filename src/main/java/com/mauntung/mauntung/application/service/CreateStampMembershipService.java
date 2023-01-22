@@ -85,7 +85,8 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
             merchant,
             rewards,
             new Date(),
-            new StampRules(command.getRedeemTtl(), command.getUsableDuration(), command.getCardCapacity())
+            new StampRules(command.getRedeemTtl(), command.getUsableDuration(), command.getCardCapacity()),
+            false
         ).build();
     }
 }

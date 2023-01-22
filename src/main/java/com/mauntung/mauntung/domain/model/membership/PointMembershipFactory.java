@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.Set;
 
 public interface PointMembershipFactory {
-    PointMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, PointRules rules);
+    PointMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, PointRules rules, boolean isFinalized);
 }

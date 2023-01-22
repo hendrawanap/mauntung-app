@@ -51,7 +51,8 @@ public class MembershipMapper {
             merchant,
             rewards,
             entity.getCreatedAt(),
-            rules
+            rules,
+            entity.getIsFinalized()
         );
 
         builder.id(entity.getId());
@@ -79,7 +80,8 @@ public class MembershipMapper {
             merchant,
             rewards,
             entity.getCreatedAt(),
-            rules
+            rules,
+            entity.getIsFinalized()
         );
 
         builder.id(entity.getId());
@@ -116,7 +118,8 @@ public class MembershipMapper {
         Set<Tier> tiers = membership.getTiers();
 
         builder.rules(jsonRules)
-            .type(Membership.Type.POINT.toString());
+            .type(Membership.Type.POINT.toString())
+            .isFinalized(membership.isFinalized());
 
         if (tiers != null) {
             builder.tiers(tiers.stream()
@@ -130,6 +133,7 @@ public class MembershipMapper {
         String jsonRules = jsonMapper.writeValueAsString(membership.getRules());
 
         builder.rules(jsonRules)
-            .type(Membership.Type.STAMP.toString());
+            .type(Membership.Type.STAMP.toString())
+            .isFinalized(membership.isFinalized());
     }
 }

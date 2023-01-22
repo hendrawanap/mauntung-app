@@ -19,9 +19,22 @@ public class StampMembership implements Membership {
     private final Date createdAt;
     private final String img;
     private final StampRules rules;
+    private boolean isFinalized;
 
     @Override
     public Integer getRewardsQty() {
         return rewards.size();
+    }
+
+    @Override
+    public void confirmFinalize() {
+        boolean isValidState = !isFinalized && isComplete();
+        if (!isValidState)
+            throw new IllegalStateException();
+        isFinalized = true;
+    }
+
+    private boolean isComplete() {
+        return !name.isBlank();
     }
 }

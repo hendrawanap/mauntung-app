@@ -34,7 +34,7 @@ public class MembershipEntity {
     @Column(nullable = false)
     private String type;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String rules;
 
     @OneToMany(mappedBy = "membership")
@@ -42,6 +42,9 @@ public class MembershipEntity {
 
     @OneToMany(mappedBy = "membership")
     private Set<TierEntity> tiers;
+
+    @Column(nullable = false)
+    private Boolean isFinalized;
 
     @UpdateTimestamp
     private Date updatedAt;

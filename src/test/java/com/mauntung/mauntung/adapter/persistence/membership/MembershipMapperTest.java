@@ -56,6 +56,7 @@ class MembershipMapperTest {
                 .build())
             .rules(jsonPointRules)
             .rewards(Set.of())
+            .isFinalized(false)
             .build();
 
         assertDoesNotThrow(() -> membershipMapper.entityToModel(entity));
@@ -81,7 +82,8 @@ class MembershipMapperTest {
             merchant,
             Set.of(),
             new Date(),
-            createDummyPointRules()
+            createDummyPointRules(),
+            false
         ).build();
 
         assertDoesNotThrow(() -> membershipMapper.modelToEntity(membership));

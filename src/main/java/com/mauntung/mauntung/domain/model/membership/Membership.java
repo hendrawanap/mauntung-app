@@ -23,6 +23,10 @@ public interface Membership {
 
     Integer getRewardsQty();
 
+    boolean isFinalized();
+
+    void confirmFinalize();
+
     enum Type {
         POINT,
         STAMP

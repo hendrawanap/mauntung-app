@@ -100,7 +100,8 @@ class MembershipRepositoryAdapterTest {
             merchantMapper.entityToModel(merchantEntity),
             rewardEntities.stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
             new Date(),
-            rules
+            rules,
+            false
         )
             .tiers(tierEntities.stream().map(tierMapper::entityToModel).collect(Collectors.toSet()))
             .build();
@@ -146,7 +147,8 @@ class MembershipRepositoryAdapterTest {
             merchantMapper.entityToModel(merchantEntity),
             rewardEntities.stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
             new Date(),
-            rules
+            rules,
+            false
         ).build();
         MembershipRepository membershipRepository = new MembershipRepositoryAdapter(jpaMembershipRepository);
         Optional<Long> membershipId = membershipRepository.save(membership);

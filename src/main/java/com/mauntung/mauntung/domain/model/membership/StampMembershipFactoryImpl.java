@@ -9,8 +9,8 @@ import java.util.Set;
 
 public class StampMembershipFactoryImpl implements StampMembershipFactory {
     @Override
-    public StampMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, StampRules rules) {
-        return new BuilderImpl(name, merchant, rewards, createdAt, rules);
+    public StampMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, StampRules rules, boolean isFinalized) {
+        return new BuilderImpl(name, merchant, rewards, createdAt, rules, isFinalized);
     }
 
     @RequiredArgsConstructor
@@ -22,10 +22,11 @@ public class StampMembershipFactoryImpl implements StampMembershipFactory {
         private final Date createdAt;
         private String img;
         private final StampRules rules;
+        private final boolean isFinalized;
 
         @Override
         public StampMembership build() {
-            return new StampMembership(id, name, merchant, rewards, createdAt, img, rules);
+            return new StampMembership(id, name, merchant, rewards, createdAt, img, rules, isFinalized);
         }
 
         @Override

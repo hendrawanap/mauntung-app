@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 public class PointMembershipFactoryImpl implements PointMembershipFactory {
     @Override
-    public PointMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, PointRules rules) {
-        return new BuilderImpl(name, merchant, rewards, createdAt, rules);
+    public PointMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, PointRules rules, boolean isFinalized) {
+        return new BuilderImpl(name, merchant, rewards, createdAt, rules, isFinalized);
     }
 
     @RequiredArgsConstructor
@@ -25,11 +25,12 @@ public class PointMembershipFactoryImpl implements PointMembershipFactory {
         private final PointRules rules;
         private String img;
         private Set<Tier> tiers;
+        private final boolean isFinalized;
 
         @Override
         public PointMembership build() throws IllegalArgumentException {
             validateTiers();
-            return new PointMembership(id, name, merchant, rewards, createdAt, rules, img, tiers);
+            return new PointMembership(id, name, merchant, rewards, createdAt, rules, img, tiers, isFinalized);
         }
 
         @Override

@@ -101,7 +101,8 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
             merchant,
             rewards,
             new Date(),
-            command.getRules()
+            command.getRules(),
+            false
         )
             .tiers(tiers)
             .build();

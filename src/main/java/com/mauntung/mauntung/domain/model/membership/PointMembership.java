@@ -20,14 +20,27 @@ public class PointMembership implements Membership {
     private final PointRules rules;
     private final String img;
     private final Set<Tier> tiers;
+    private boolean isFinalized;
 
     @Override
     public Integer getRewardsQty() {
         return rewards.size();
     }
 
+    @Override
+    public void confirmFinalize() {
+        boolean isValidState = !isFinalized && isComplete();
+        if (!isValidState)
+            throw new IllegalStateException();
+        isFinalized = true;
+    }
+
     public Integer getTiersQty() {
         if (tiers == null) return null;
         return tiers.size();
+    }
+
+    private boolean isComplete() {
+        return !name.isBlank();
     }
 }
