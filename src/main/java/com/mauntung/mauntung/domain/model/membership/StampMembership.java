@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.domain.model.membership;
 
+import com.mauntung.mauntung.domain.common.MessageBuilder;
 import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.AccessLevel;
@@ -29,8 +30,17 @@ public class StampMembership implements Membership {
     @Override
     public void confirmFinalize() {
         boolean isValidState = !isFinalized && isComplete();
-        if (!isValidState)
-            throw new IllegalStateException();
+        if (!isValidState) {
+            MessageBuilder mb = new MessageBuilder();
+
+            if (isFinalized)
+                mb.append("membership has already finalized");
+
+            if (!isComplete())
+                mb.append("membership is not in complete state");
+
+            throw new IllegalStateException(String.format("Unable to finalize membership: %s", mb));
+        }
         isFinalized = true;
     }
 
