@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,14 +34,18 @@ public class MembershipController {
         boolean isPointMembership = request.getType().equalsIgnoreCase(Membership.Type.POINT.toString());
         boolean isStampMembership = request.getType().equalsIgnoreCase(Membership.Type.STAMP.toString());
 
-        if (isPointMembership) {
-            CreatePointMembershipCommand command = buildCreatePointMembershipCommand(request, userId);
-            CreatePointMembershipResponse response = createPointMembershipUseCase.apply(command);
-            return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
-        } else if (isStampMembership) {
-            CreateStampMembershipCommand command = buildCreateStampMembershipCommand(request, userId);
-            CreateStampMembershipResponse response = createStampMembershipUseCase.apply(command);
-            return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
+        try {
+            if (isPointMembership) {
+                CreatePointMembershipCommand command = buildCreatePointMembershipCommand(request, userId);
+                CreatePointMembershipResponse response = createPointMembershipUseCase.apply(command);
+                return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
+            } else if (isStampMembership) {
+                CreateStampMembershipCommand command = buildCreateStampMembershipCommand(request, userId);
+                CreateStampMembershipResponse response = createStampMembershipUseCase.apply(command);
+                return new ResponseEntity<>(new CreateMembershipResponseBody(response), HttpStatus.CREATED);
+            }
+        } catch (NoSuchElementException ex) {
+            throw new IllegalArgumentException(ex.getMessage());
         }
 
         throw new IllegalArgumentException("Invalid type provided");
