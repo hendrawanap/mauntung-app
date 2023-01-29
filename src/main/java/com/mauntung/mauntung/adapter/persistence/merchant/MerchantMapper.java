@@ -14,9 +14,12 @@ public class MerchantMapper {
     private final MembershipMapper membershipMapper = new MembershipMapper();
 
     public Merchant entityToModel(MerchantEntity entity) {
-        Membership membership;
+        Membership membership = null;
         try {
-            membership = membershipMapper.entityToModel(entity.getMembership());
+            boolean hasMembership = entity.getMembership() != null;
+            if (hasMembership) {
+                membership = membershipMapper.entityToModel(entity.getMembership());
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -29,10 +32,12 @@ public class MerchantMapper {
     }
 
     public MerchantEntity modelToEntity(Merchant model) {
-        MembershipEntity membership;
+        MembershipEntity membership = null;
         try {
-            membership = membershipMapper.modelToEntity(model.getMembership());
-            membership.setMerchant(MerchantEntity.builder().id(model.getId()).build());
+            if (model.hasCreatedMembership()) {
+                membership = membershipMapper.modelToEntity(model.getMembership());
+                membership.setMerchant(MerchantEntity.builder().id(model.getId()).build());
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -46,10 +51,12 @@ public class MerchantMapper {
     }
 
     public MerchantEntity modelToEntity(Merchant model, Long userId) {
-        MembershipEntity membership;
+        MembershipEntity membership = null;
         try {
-            membership = membershipMapper.modelToEntity(model.getMembership());
-            membership.setMerchant(MerchantEntity.builder().id(model.getId()).build());
+            if (model.hasCreatedMembership()) {
+                membership = membershipMapper.modelToEntity(model.getMembership());
+                membership.setMerchant(MerchantEntity.builder().id(model.getId()).build());
+            }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
