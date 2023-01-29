@@ -1,5 +1,6 @@
 package com.mauntung.mauntung.adapter.persistence.merchant;
 
+import com.mauntung.mauntung.adapter.persistence.membership.MembershipEntity;
 import com.mauntung.mauntung.adapter.persistence.user.UserEntity;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -30,6 +31,9 @@ public class MerchantEntity {
 
     @Column
     private String phone;
+
+    @OneToOne(mappedBy = "merchant")
+    private MembershipEntity membership;
 
     @UpdateTimestamp
     private Date updatedAt;

@@ -2,14 +2,11 @@ package com.mauntung.mauntung.adapter.persistence.membership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mauntung.mauntung.adapter.persistence.merchant.MerchantEntity;
-import com.mauntung.mauntung.adapter.persistence.merchant.MerchantMapper;
 import com.mauntung.mauntung.adapter.persistence.reward.RewardEntity;
 import com.mauntung.mauntung.adapter.persistence.reward.RewardMapper;
 import com.mauntung.mauntung.adapter.persistence.tier.TierEntity;
 import com.mauntung.mauntung.adapter.persistence.tier.TierMapper;
 import com.mauntung.mauntung.domain.model.membership.*;
-import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 
 import java.util.Set;
@@ -18,7 +15,6 @@ import java.util.stream.Collectors;
 public class MembershipMapper {
     private final PointMembershipFactory pointMembershipFactory = new PointMembershipFactoryImpl();
     private final StampMembershipFactory stampMembershipFactory = new StampMembershipFactoryImpl();
-    private final MerchantMapper merchantMapper = new MerchantMapper();
     private final RewardMapper rewardMapper = new RewardMapper();
     private final TierMapper tierMapper = new TierMapper();
     private final ObjectMapper jsonMapper = new ObjectMapper();
@@ -38,7 +34,6 @@ public class MembershipMapper {
     }
 
     private Membership buildPointMembership(MembershipEntity entity) throws JsonProcessingException {
-        Merchant merchant = merchantMapper.entityToModel(entity.getMerchant());
         PointRules rules = jsonMapper.readValue(entity.getRules(), PointRules.class);
         Set<TierEntity> tierEntities = entity.getTiers();
         Set<Reward> rewards = entity.getRewards()
@@ -48,7 +43,6 @@ public class MembershipMapper {
 
         PointMembershipBuilder builder = pointMembershipFactory.builder(
             entity.getName(),
-            merchant,
             rewards,
             entity.getCreatedAt(),
             rules,
@@ -68,7 +62,6 @@ public class MembershipMapper {
     }
 
     private Membership buildStampMembership(MembershipEntity entity) throws JsonProcessingException {
-        Merchant merchant = merchantMapper.entityToModel(entity.getMerchant());
         StampRules rules = jsonMapper.readValue(entity.getRules(), StampRules.class);
         Set<Reward> rewards = entity.getRewards()
             .stream()
@@ -77,7 +70,6 @@ public class MembershipMapper {
 
         StampMembershipBuilder builder = stampMembershipFactory.builder(
             entity.getName(),
-            merchant,
             rewards,
             entity.getCreatedAt(),
             rules,
@@ -100,7 +92,6 @@ public class MembershipMapper {
             return null;
         }
 
-        MerchantEntity merchantEntity = merchantMapper.modelToEntity(membership.getMerchant());
         Set<RewardEntity> rewardEntities = membership.getRewards()
             .stream()
             .map(rewardMapper::modelToEntity)
@@ -108,7 +99,6 @@ public class MembershipMapper {
 
         return builder.id(membership.getId())
             .name(membership.getName())
-            .merchant(merchantEntity)
             .rewards(rewardEntities)
             .build();
     }
