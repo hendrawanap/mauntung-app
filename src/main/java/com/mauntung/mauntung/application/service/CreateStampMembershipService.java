@@ -38,7 +38,7 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
 
         Set<Reward> rewards = findAllRewardsByIds(command.getRewardIds());
 
-        StampMembership membership = buildStampMembership(command, merchant, rewards);
+        StampMembership membership = buildStampMembership(command, rewards);
         Long membershipId = saveMembershipAndGetId(membership);
 
         attachRewardsToMembership(rewards, membershipId);
@@ -79,10 +79,9 @@ public class CreateStampMembershipService implements CreateStampMembershipUseCas
         );
     }
 
-    private StampMembership buildStampMembership(CreateStampMembershipCommand command, Merchant merchant, Set<Reward> rewards) throws IllegalArgumentException {
+    private StampMembership buildStampMembership(CreateStampMembershipCommand command, Set<Reward> rewards) throws IllegalArgumentException {
         return membershipFactory.builder(
             command.getName(),
-            merchant,
             rewards,
             new Date(),
             new StampRules(command.getRedeemTtl(), command.getUsableDuration(), command.getCardCapacity()),

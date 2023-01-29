@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.membership;
 
 import com.mauntung.mauntung.domain.common.MessageBuilder;
-import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import lombok.RequiredArgsConstructor;
 
@@ -11,15 +10,14 @@ import java.util.stream.Collectors;
 
 public class PointMembershipFactoryImpl implements PointMembershipFactory {
     @Override
-    public PointMembershipBuilder builder(String name, Merchant merchant, Set<Reward> rewards, Date createdAt, PointRules rules, boolean isFinalized) {
-        return new BuilderImpl(name, merchant, rewards, createdAt, rules, isFinalized);
+    public PointMembershipBuilder builder(String name, Set<Reward> rewards, Date createdAt, PointRules rules, boolean isFinalized) {
+        return new BuilderImpl(name, rewards, createdAt, rules, isFinalized);
     }
 
     @RequiredArgsConstructor
     private static class BuilderImpl implements PointMembershipBuilder {
         private Long id;
         private final String name;
-        private final Merchant merchant;
         private final Set<Reward> rewards;
         private final Date createdAt;
         private final PointRules rules;
@@ -30,7 +28,7 @@ public class PointMembershipFactoryImpl implements PointMembershipFactory {
         @Override
         public PointMembership build() throws IllegalArgumentException {
             validateTiers();
-            return new PointMembership(id, name, merchant, rewards, createdAt, rules, img, tiers, isFinalized);
+            return new PointMembership(id, name, rewards, createdAt, rules, img, tiers, isFinalized);
         }
 
         @Override

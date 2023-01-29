@@ -1,8 +1,5 @@
 package com.mauntung.mauntung.domain.model.membership;
 
-import com.mauntung.mauntung.domain.model.merchant.Merchant;
-import com.mauntung.mauntung.domain.model.merchant.MerchantFactory;
-import com.mauntung.mauntung.domain.model.merchant.MerchantFactoryImpl;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 import com.mauntung.mauntung.domain.model.reward.RewardFactory;
 import com.mauntung.mauntung.domain.model.reward.RewardFactoryImpl;
@@ -21,9 +18,7 @@ import static org.mockito.Mockito.*;
 class PointMembershipFactoryImplTest {
     static final PointMembershipFactory membershipFactory = new PointMembershipFactoryImpl();
     static final RewardFactory rewardFactory = new RewardFactoryImpl();
-    static final MerchantFactory merchantFactory = new MerchantFactoryImpl();
     static final String name = "name";
-    static final Merchant merchant = merchantFactory.builder("name", new Date()).build();
     static final Set<Reward> rewards = Set.of(rewardFactory.builder("name", "description", "terms", 10).build());
     static final Date createdAt = new Date();
     static final PointRules pointRules = new PointRules(
@@ -68,7 +63,7 @@ class PointMembershipFactoryImplTest {
 
     @Test
     void givenValidTiers_build_shouldNotThrowsException() {
-        PointMembershipBuilder builder = membershipFactory.builder(name, merchant, rewards, createdAt, pointRules, false)
+        PointMembershipBuilder builder = membershipFactory.builder(name, rewards, createdAt, pointRules, false)
             .tiers(tiers);
         assertDoesNotThrow(builder::build);
     }
@@ -76,7 +71,7 @@ class PointMembershipFactoryImplTest {
     @ParameterizedTest
     @MethodSource("invalidTiersProvider")
     void givenInvalidTiers_build_shouldThrowsException(Set<Tier> tiers) {
-        PointMembershipBuilder builder = membershipFactory.builder(name, merchant, rewards, createdAt, pointRules, false)
+        PointMembershipBuilder builder = membershipFactory.builder(name, rewards, createdAt, pointRules, false)
             .tiers(tiers);
         assertThrows(IllegalArgumentException.class, builder::build);
     }

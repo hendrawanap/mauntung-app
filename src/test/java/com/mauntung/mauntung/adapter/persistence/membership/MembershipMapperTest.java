@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mauntung.mauntung.adapter.persistence.merchant.MerchantEntity;
 import com.mauntung.mauntung.adapter.persistence.user.UserEntity;
 import com.mauntung.mauntung.domain.model.membership.*;
-import com.mauntung.mauntung.domain.model.merchant.Merchant;
-import com.mauntung.mauntung.domain.model.merchant.MerchantFactoryImpl;
 import com.mauntung.mauntung.domain.model.user.User;
 import org.junit.jupiter.api.Test;
 
@@ -73,13 +71,8 @@ class MembershipMapperTest {
 
     @Test
     void modelToEntity_shouldNotThrowsException() throws JsonProcessingException {
-        Merchant merchant = new MerchantFactoryImpl().builder(
-            "merchant name",
-            new Date()
-        ).build();
         Membership membership = new PointMembershipFactoryImpl().builder(
             "name",
-            merchant,
             Set.of(),
             new Date(),
             createDummyPointRules(),

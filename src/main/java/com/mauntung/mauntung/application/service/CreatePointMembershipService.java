@@ -41,7 +41,7 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
             tiers = findAllTiersByIds(command.getTierIds());
         }
 
-        PointMembership membership = buildPointMembership(command, merchant, rewards, tiers);
+        PointMembership membership = buildPointMembership(command, rewards, tiers);
         Long membershipId = saveMembershipAndGetId(membership);
 
         attachRewardsToMembership(rewards, membershipId);
@@ -95,10 +95,9 @@ public class CreatePointMembershipService implements CreatePointMembershipUseCas
         );
     }
 
-    private PointMembership buildPointMembership(CreatePointMembershipCommand command, Merchant merchant, Set<Reward> rewards, Set<Tier> tiers) {
+    private PointMembership buildPointMembership(CreatePointMembershipCommand command, Set<Reward> rewards, Set<Tier> tiers) {
         return membershipFactory.builder(
             command.getName(),
-            merchant,
             rewards,
             new Date(),
             command.getRules(),

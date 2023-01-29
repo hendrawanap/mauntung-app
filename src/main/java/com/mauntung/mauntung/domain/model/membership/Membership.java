@@ -1,6 +1,5 @@
 package com.mauntung.mauntung.domain.model.membership;
 
-import com.mauntung.mauntung.domain.model.merchant.Merchant;
 import com.mauntung.mauntung.domain.model.reward.Reward;
 
 import java.util.Date;
@@ -12,8 +11,6 @@ public interface Membership {
     Long getId();
 
     String getName();
-
-    Merchant getMerchant();
 
     Set<Reward> getRewards();
 

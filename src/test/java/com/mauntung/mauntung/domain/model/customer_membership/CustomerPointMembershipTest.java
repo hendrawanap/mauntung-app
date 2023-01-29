@@ -25,7 +25,7 @@ class CustomerPointMembershipTest {
     static Date now;
     static List<Point> points;
     static Set<Redeem> redeems;
-    static PointMembership pointMembership;
+    static Merchant merchant;
 
     @BeforeAll
     static void beforeAll() {
@@ -33,12 +33,11 @@ class CustomerPointMembershipTest {
         membershipFactory = new CustomerPointMembershipFactoryImpl();
         now = new Date();
         redeems = Set.of();
+        PointMembership pointMembership = mock(PointMembership.class);
 
-        Merchant merchant = mock(Merchant.class);
+        merchant = mock(Merchant.class);
         when(merchant.getName()).thenReturn("Merchant");
-
-        pointMembership = mock(PointMembership.class);
-        when(pointMembership.getMerchant()).thenReturn(merchant);
+        when(merchant.getMembership()).thenReturn(pointMembership);
     }
 
     @BeforeEach
@@ -77,19 +76,19 @@ class CustomerPointMembershipTest {
 
     @Test
     void getBalance_shouldReturn50() {
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points).build();
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
         assertEquals(50, membership.getBalance());
     }
 
     @Test
     void getTotalPointsClaimedInYear_shouldReturn60() {
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points).build();
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
         assertEquals(60, membership.getTotalPointsClaimedInYear());
     }
 
     @Test
     void givenNullTiers_getCurrentTier_shouldReturnNull() {
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points).build();
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
         assertNull(membership.getCurrentTier());
     }
 
@@ -104,7 +103,7 @@ class CustomerPointMembershipTest {
         Tier goldTier = mock(Tier.class);
         when(goldTier.getRequiredPoints()).thenReturn(100);
 
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points)
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points)
             .tiers(Set.of(goldTier, silverTier, bronzeTier))
             .build();
 
@@ -122,7 +121,7 @@ class CustomerPointMembershipTest {
         Tier goldTier = mock(Tier.class);
         when(goldTier.getRequiredPoints()).thenReturn(100);
 
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points)
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points)
             .tiers(Set.of(goldTier, silverTier, bronzeTier))
             .build();
 
@@ -133,14 +132,14 @@ class CustomerPointMembershipTest {
 
     @Test
     void givenAmount30_deductBalance_shouldReturn3ChangedPoints() {
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points).build();
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
         List<Point> changedPoints = membership.deductBalance(30);
         assertEquals(3, changedPoints.size());
     }
 
     @Test
     void givenAmount100_deductBalance_shouldReturnNull() {
-        CustomerPointMembership membership = membershipFactory.builder(pointMembership, now, redeems, points).build();
+        CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
         List<Point> changedPoints = membership.deductBalance(100);
         assertNull(changedPoints);
     }

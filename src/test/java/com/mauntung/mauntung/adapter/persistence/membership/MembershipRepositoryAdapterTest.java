@@ -1,12 +1,9 @@
 package com.mauntung.mauntung.adapter.persistence.membership;
 
-import com.mauntung.mauntung.adapter.persistence.merchant.MerchantEntity;
-import com.mauntung.mauntung.adapter.persistence.merchant.MerchantMapper;
 import com.mauntung.mauntung.adapter.persistence.reward.RewardEntity;
 import com.mauntung.mauntung.adapter.persistence.reward.RewardMapper;
 import com.mauntung.mauntung.adapter.persistence.tier.TierEntity;
 import com.mauntung.mauntung.adapter.persistence.tier.TierMapper;
-import com.mauntung.mauntung.adapter.persistence.user.UserEntity;
 import com.mauntung.mauntung.application.port.membership.MembershipRepository;
 import com.mauntung.mauntung.domain.model.membership.*;
 import org.junit.jupiter.api.Test;
@@ -70,20 +67,6 @@ class MembershipRepositoryAdapterTest {
         tierEntities.add(entityManager.persist(tierEntity2));
         tierEntities.add(entityManager.persist(tierEntity3));
 
-        UserEntity userEntity = UserEntity.builder()
-            .role("merchant")
-            .email("merchant@mail.com")
-            .password("password")
-            .build();
-        userEntity = entityManager.persist(userEntity);
-
-        MerchantMapper merchantMapper = new MerchantMapper();
-        MerchantEntity merchantEntity = MerchantEntity.builder()
-            .user(userEntity)
-            .name("name")
-            .build();
-        merchantEntity = entityManager.persist(merchantEntity);
-
         entityManager.flush();
 
         PointMembershipFactory pointMembershipFactory = new PointMembershipFactoryImpl();
@@ -97,7 +80,6 @@ class MembershipRepositoryAdapterTest {
         );
         Membership membership = pointMembershipFactory.builder(
             "name",
-            merchantMapper.entityToModel(merchantEntity),
             rewardEntities.stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
             new Date(),
             rules,
@@ -124,27 +106,12 @@ class MembershipRepositoryAdapterTest {
             rewardEntities.add(entityManager.persist(rewardEntity));
         }
 
-        UserEntity userEntity = UserEntity.builder()
-            .role("merchant")
-            .email("merchant@mail.com")
-            .password("password")
-            .build();
-        userEntity = entityManager.persist(userEntity);
-
-        MerchantMapper merchantMapper = new MerchantMapper();
-        MerchantEntity merchantEntity = MerchantEntity.builder()
-            .user(userEntity)
-            .name("name")
-            .build();
-        merchantEntity = entityManager.persist(merchantEntity);
-
         entityManager.flush();
 
         StampMembershipFactory stampMembershipFactory = new StampMembershipFactoryImpl();
         StampRules rules = new StampRules(10, 10, 10);
         Membership membership = stampMembershipFactory.builder(
             "name",
-            merchantMapper.entityToModel(merchantEntity),
             rewardEntities.stream().map(rewardMapper::entityToModel).collect(Collectors.toSet()),
             new Date(),
             rules,

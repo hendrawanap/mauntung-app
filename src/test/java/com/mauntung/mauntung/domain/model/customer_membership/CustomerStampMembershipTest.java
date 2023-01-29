@@ -19,7 +19,7 @@ class CustomerStampMembershipTest {
     static CustomerStampMembershipFactory membershipFactory;
     static Date now;
     static Set<Redeem> redeems;
-    static StampMembership stampMembership;
+    static Merchant merchant;
 
     @BeforeAll
     static void beforeAll() {
@@ -27,15 +27,15 @@ class CustomerStampMembershipTest {
         now = new Date();
         redeems = Set.of();
 
-        Merchant merchant = mock(Merchant.class);
-        when(merchant.getName()).thenReturn("Merchant");
-
         StampRules rules = mock(StampRules.class);
         when(rules.getCardCapacity()).thenReturn(10);
 
-        stampMembership = mock(StampMembership.class);
-        when(stampMembership.getMerchant()).thenReturn(merchant);
+        StampMembership stampMembership = mock(StampMembership.class);
         when(stampMembership.getRules()).thenReturn(rules);
+
+        merchant = mock(Merchant.class);
+        when(merchant.getName()).thenReturn("Merchant");
+        when(merchant.getMembership()).thenReturn(stampMembership);
     }
 
     static Stamp createUsableStamp() {
@@ -69,7 +69,7 @@ class CustomerStampMembershipTest {
             createExpiredStamp()
         );
 
-        CustomerStampMembership membership = membershipFactory.builder(stampMembership, now, redeems, stamps).build();
+        CustomerStampMembership membership = membershipFactory.builder(merchant, now, redeems, stamps).build();
         assertEquals(5, membership.getBalance());
     }
 
@@ -88,7 +88,7 @@ class CustomerStampMembershipTest {
             createUsableStamp()
         );
 
-        CustomerStampMembership membership = membershipFactory.builder(stampMembership, now, redeems, stamps).build();
+        CustomerStampMembership membership = membershipFactory.builder(merchant, now, redeems, stamps).build();
         assertTrue(membership.isFull());
     }
 
@@ -107,7 +107,7 @@ class CustomerStampMembershipTest {
             createUsedStamp()
         );
 
-        CustomerStampMembership membership = membershipFactory.builder(stampMembership, now, redeems, stamps).build();
+        CustomerStampMembership membership = membershipFactory.builder(merchant, now, redeems, stamps).build();
         assertFalse(membership.isFull());
     }
 
@@ -122,7 +122,7 @@ class CustomerStampMembershipTest {
             createUsedStamp()
         );
 
-        CustomerStampMembership membership = membershipFactory.builder(stampMembership, now, redeems, stamps).build();
+        CustomerStampMembership membership = membershipFactory.builder(merchant, now, redeems, stamps).build();
         assertNull(membership.deductBalance(10));
     }
 
@@ -139,7 +139,7 @@ class CustomerStampMembershipTest {
             createUsedStamp()
         );
 
-        CustomerStampMembership membership = membershipFactory.builder(stampMembership, now, redeems, stamps).build();
+        CustomerStampMembership membership = membershipFactory.builder(merchant, now, redeems, stamps).build();
         assertEquals(5, membership.deductBalance(5).size());
     }
 
