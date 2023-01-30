@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.reward;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,23 +15,24 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RewardFactoryImplTest {
-    RewardFactory rewardFactory = new RewardFactoryImpl();
-    static String name = "name";
-    static String description = "description";
-    static String termsCondition = "termsCondition";
-    static int correctCost = 10;
+    static RewardFactory rewardFactory;
+    static String name;
+    static String description;
+    static String termsCondition;
+    static int correctCost;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        rewardFactory = new RewardFactoryImpl();
+        name = "name";
+        description = "description";
+        termsCondition = "termsCondition";
+        correctCost = 10;
     }
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveCost_build_shouldNotThrowsException(int correctCost) {
+    void givenZeroOrPositiveCost_build_shouldNotThrowException(int correctCost) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         assertDoesNotThrow(rewardBuilder::build);
     }
@@ -46,17 +46,19 @@ class RewardFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveStock_build_shouldNotThrowsException(int correctStock) {
+    void givenZeroOrPositiveStock_build_shouldNotThrowException(int correctStock) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.stock(correctStock);
+
         assertDoesNotThrow(rewardBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeStock_build_shouldNotThrowsException(int wrongStock) {
+    void givenNegativeStock_build_shouldThrowsException(int wrongStock) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.stock(wrongStock);
+
         assertThrows(IllegalArgumentException.class, rewardBuilder::build);
     }
 
@@ -66,6 +68,7 @@ class RewardFactoryImplTest {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.startPeriod(startPeriod);
         rewardBuilder.endPeriod(endPeriod);
+
         assertThrows(IllegalArgumentException.class, rewardBuilder::build);
     }
 
@@ -75,24 +78,33 @@ class RewardFactoryImplTest {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.startPeriod(startPeriod);
         rewardBuilder.endPeriod(endPeriod);
+
         assertDoesNotThrow(rewardBuilder::build);
     }
 
     @Test
     void createCopyWithNewStock_shouldReturnNewRewardWithSameAttributesButNewStock() {
-        int oldStock = 10;
-        int newStock = 1;
+        Reward oldReward = createBaseReward();
 
+        int newStock = 1;
+        Reward newReward = rewardFactory.createCopyWithNewStock(oldReward, newStock);
+
+        assertAllAttributesButNewStockAreEquals(oldReward, newReward, newStock);
+    }
+
+    Reward createBaseReward() {
+        int oldStock = 10;
         Instant now = Instant.now();
-        Reward oldReward = rewardFactory.builder(name, description, termsCondition, correctCost)
+
+        return rewardFactory.builder(name, description, termsCondition, correctCost)
             .id(1L)
             .stock(oldStock)
             .startPeriod(new Date(now.minus(1, ChronoUnit.DAYS).toEpochMilli()))
             .endPeriod(new Date(now.plus(10, ChronoUnit.DAYS).toEpochMilli()))
             .build();
+    }
 
-        Reward newReward = rewardFactory.createCopyWithNewStock(oldReward, newStock);
-
+    void assertAllAttributesButNewStockAreEquals(Reward oldReward, Reward newReward, int newStock) {
         assertEquals(oldReward.getName(), newReward.getName());
         assertEquals(oldReward.getDescription(), newReward.getDescription());
         assertEquals(oldReward.getTermsCondition(), newReward.getTermsCondition());
