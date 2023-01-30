@@ -9,6 +9,44 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StampTest {
     @Test
+    void givenExpiredAtIsBeforeCreatedDate_new_shouldThrowException() {
+        Date now = new Date();
+        Date expiredAt = createPastDate(2, now);
+        Date createdAt = createPastDate(1, now);
+
+        assertThrows(IllegalArgumentException.class, () -> new Stamp(expiredAt, createdAt));
+    }
+
+    @Test
+    void givenUsedDateIsAfterExpiredAt_new_shouldThrowException() {
+        Date now = new Date();
+        Date expiredAt = createPastDate(1, now);
+        Date createdAt = createPastDate(2, now);
+        Date usedAt = createFutureDate(1, now);
+
+        assertThrows(IllegalArgumentException.class, () -> new Stamp(expiredAt, createdAt, usedAt));
+    }
+
+    @Test
+    void givenExpiredAtIsNotBeforeCreatedDate_new_shouldNotThrowException() {
+        Date now = new Date();
+        Date expiredAt = createFutureDate(1, now);
+        Date createdAt = createPastDate(1, now);
+
+        assertDoesNotThrow(() -> new Stamp(expiredAt, createdAt));
+    }
+
+    @Test
+    void givenUsedDateIsNotAfterExpiredAt_new_shouldNotThrowException() {
+        Date now = new Date();
+        Date expiredAt = createFutureDate(2, now);
+        Date createdAt = createPastDate(1, now);
+        Date usedAt = createFutureDate(1, now);
+
+        assertDoesNotThrow(() -> new Stamp(expiredAt, createdAt, usedAt));
+    }
+
+    @Test
     void givenPassedExpiredAtAndNullUsedAt_isUsable_shouldReturnFalse() {
         Date now = new Date();
         Date expiredAt = createPastDate(1, now);
