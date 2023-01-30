@@ -1,6 +1,7 @@
 package com.mauntung.mauntung.domain.model.redeem;
 
 import com.mauntung.mauntung.domain.model.reward.Reward;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,19 +16,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class RedeemFactoryImplTest {
-    static RedeemFactory redeemFactory = new RedeemFactoryImpl();
-    static String name = "name";
-    static String description = "desc";
-    static String termsCondition = "terms";
-    static int cost = 10;
-    static UUID code = UUID.randomUUID();
-    static Reward reward = mock(Reward.class);
-    static Instant now = Instant.now();
-    static Date createdAt = new Date();
-    static Date expiredAt = new Date(now.plus(10, ChronoUnit.DAYS).toEpochMilli());
+    static RedeemFactory redeemFactory;
+    static String name;
+    static String description;
+    static String termsCondition;
+    static int cost;
+    static UUID code;
+    static Reward reward;
+    static Instant now;
+    static Date createdAt;
+    static Date expiredAt;
 
-    static IntStream negativeIntegersStream() {
-        return IntStream.range(-10, 0);
+    @BeforeAll
+    static void beforeAll() {
+        redeemFactory = new RedeemFactoryImpl();
+        name = "name";
+        description = "desc";
+        termsCondition = "terms";
+        cost = 10;
+        code = UUID.randomUUID();
+        reward = mock(Reward.class);
+        now = Instant.now();
+        createdAt = new Date();
+        expiredAt = new Date(now.plus(10, ChronoUnit.DAYS).toEpochMilli());
     }
 
     @ParameterizedTest
@@ -38,8 +49,12 @@ class RedeemFactoryImplTest {
     }
 
     @Test
-    void givenCompleteArgs_build_shouldNotThrowsException() {
+    void givenCompleteArgs_build_shouldNotThrowException() {
         RedeemBuilder redeemBuilder = redeemFactory.builder(name, description, termsCondition, cost, code, reward, createdAt, expiredAt);
         assertDoesNotThrow(redeemBuilder::build);
+    }
+
+    static IntStream negativeIntegersStream() {
+        return IntStream.range(-10, 0);
     }
 }
