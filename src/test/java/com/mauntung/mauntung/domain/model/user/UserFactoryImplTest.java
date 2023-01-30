@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.user;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,19 +11,21 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserFactoryImplTest {
-    UserFactory userFactory = new UserFactoryImpl();
-    static String wellFormedEmail = "user@mail.com";
-    static String password = "password";
-    static Date createdAt = new Date();
-    static Long id = 1L;
-    static User.Role role = User.Role.MERCHANT;
+    static UserFactory userFactory;
+    static String wellFormedEmail;
+    static String password;
+    static Date createdAt;
+    static Long id;
+    static User.Role role;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        userFactory = new UserFactoryImpl();
+        wellFormedEmail = "user@mail.com";
+        password = "password";
+        createdAt = new Date();
+        id = 1L;
+        role = User.Role.MERCHANT;
     }
 
     @ParameterizedTest
@@ -40,12 +41,12 @@ class UserFactoryImplTest {
     }
 
     @Test
-    void givenWellFormedEmail_createWithoutId_ShouldNotThrowException() {
+    void givenWellFormedEmail_createWithoutId_shouldNotThrowException() {
         assertDoesNotThrow(() -> userFactory.createWithoutId(wellFormedEmail, password, role, createdAt));
     }
 
     @Test
-    void givenWellFormedEmail_createWithId_ShouldNotThrowException() {
+    void givenWellFormedEmail_createWithId_shouldNotThrowException() {
         assertDoesNotThrow(() -> userFactory.createWithId(wellFormedEmail, password, role, createdAt, id));
     }
 
