@@ -30,13 +30,13 @@ class UserFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("malformedEmailsProvider")
-    void givenMalformedEmail_createWithoutId_shouldThrowException(String malformedEmail) {
+    void givenMalformedEmail_createWithoutId_shouldThrowsException(String malformedEmail) {
         assertThrows(IllegalStateException.class, () -> userFactory.createWithoutId(malformedEmail, password, role, createdAt));
     }
 
     @ParameterizedTest
     @MethodSource("malformedEmailsProvider")
-    void givenMalformedEmail_createWithId_shouldThrowException(String malformedEmail) {
+    void givenMalformedEmail_createWithId_shouldThrowsException(String malformedEmail) {
         assertThrows(IllegalStateException.class, () -> userFactory.createWithId(malformedEmail, password, role, createdAt, id));
     }
 
