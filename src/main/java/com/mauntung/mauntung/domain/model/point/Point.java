@@ -30,7 +30,7 @@ public class Point {
     }
 
     public boolean isClaimed() {
-        return claimedAt != null;
+        return claimedAt != null && claimedValue != null;
     }
 
     public boolean isClaimable() {

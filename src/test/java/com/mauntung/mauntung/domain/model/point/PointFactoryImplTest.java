@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.point;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -13,25 +12,41 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointFactoryImplTest {
-    static final PointFactory pointFactory = new PointFactoryImpl();
-    static final int baseValue = 10;
-    static final int claimableDuration = 10;
-    static final int usableDuration = 10;
-    static final Date createdAt = new Date();
-    static final UUID code = UUID.randomUUID();
+    static PointFactory pointFactory;
+    static int baseValue;
+    static int claimableDuration;
+    static int usableDuration;
+    static Date createdAt;
+    static UUID code;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        pointFactory = new PointFactoryImpl();
+        baseValue = 10;
+        claimableDuration = 10;
+        usableDuration = 10;
+        createdAt = new Date();
+        code = UUID.randomUUID();
     }
 
     @Test
-    void givenCompleteArgs_build_shouldNotThrowsException() {
+    void givenCompleteArgs_build_shouldNotThrowException() {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         assertDoesNotThrow(pointBuilder::build);
+    }
+
+    @Test
+    void givenNullClaimedValueAndNonNullCurrentValue_build_shouldThrowsException() {
+        PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
+        pointBuilder.currentValue(baseValue);
+        assertThrows(IllegalArgumentException.class, pointBuilder::build);
+    }
+
+    @Test
+    void givenNullCurrentValueAndNonNullClaimedValue_build_shouldThrowsException() {
+        PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
+        pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
+        assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
     @ParameterizedTest
@@ -59,7 +74,8 @@ class PointFactoryImplTest {
     @MethodSource("lessThanOneIntegersProvider")
     void givenLessThanOneClaimedValue_build_shouldThrowsException(int claimedValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
-        pointBuilder.claimedValue(claimedValue);
+        pointBuilder.claimedValue(new ClaimedValue(claimedValue, createdAt));
+        pointBuilder.currentValue(claimedValue);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
@@ -67,8 +83,18 @@ class PointFactoryImplTest {
     @MethodSource("negativeIntegersProvider")
     void givenNegativeCurrentValue_build_shouldThrowsException(int currentValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
+        pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
         pointBuilder.currentValue(currentValue);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
+    }
+
+    @ParameterizedTest
+    @MethodSource("zeroOrPositiveIntegersProvider")
+    void givenZeroOrPositiveCurrentValue_build_shouldNotThrowException(int currentValue) {
+        PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
+        pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
+        pointBuilder.currentValue(currentValue);
+        assertDoesNotThrow(pointBuilder::build);
     }
 
     static IntStream lessThanOneIntegersProvider() {
@@ -77,5 +103,9 @@ class PointFactoryImplTest {
 
     static IntStream negativeIntegersProvider() {
         return IntStream.range(-10, 0);
+    }
+
+    static IntStream zeroOrPositiveIntegersProvider() {
+        return IntStream.range(0, 10);
     }
 }
