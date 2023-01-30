@@ -11,76 +11,70 @@ class StampTest {
     @Test
     void givenPassedExpiredAtAndNullUsedAt_isUsable_shouldReturnFalse() {
         Date now = new Date();
-
-        // Expired at 10 days ago
-        Date expiredAt = new Date(now.toInstant().minus(10, ChronoUnit.DAYS).toEpochMilli());
-
-        // Created at 12 days ago
-        Date createdAt = new Date(now.toInstant().minus(12, ChronoUnit.DAYS).toEpochMilli());
+        Date expiredAt = createPastDate(1, now);
+        Date createdAt = createPastDate(2, now);
 
         Stamp stamp = new Stamp(expiredAt, createdAt);
-        assertFalse(stamp.isUsable());
+        boolean isUsable = stamp.isUsable();
+
+        assertFalse(isUsable);
     }
 
     @Test
     void givenFutureExpiredAtAndNullUsedAt_isUsable_shouldReturnTrue() {
         Date now = new Date();
-
-        // Will be expired in 10 days
-        Date expiredAt = new Date(now.toInstant().plus(10, ChronoUnit.DAYS).toEpochMilli());
-
-        // Created at 2 days ago
-        Date createdAt = new Date(now.toInstant().minus(2, ChronoUnit.DAYS).toEpochMilli());
+        Date expiredAt = createFutureDate(1, now);
+        Date createdAt = createPastDate(1, now);
 
         Stamp stamp = new Stamp(expiredAt, createdAt);
-        assertTrue(stamp.isUsable());
+        boolean isUsable = stamp.isUsable();
+
+        assertTrue(isUsable);
     }
 
     @Test
     void givenFutureExpiredAtAndNonNullUsedAt_isUsable_shouldReturnFalse() {
         Date now = new Date();
-
-        // Will be expired in 10 days
-        Date expiredAt = new Date(now.toInstant().plus(10, ChronoUnit.DAYS).toEpochMilli());
-
-        // Created at 2 days ago
-        Date createdAt = new Date(now.toInstant().minus(2, ChronoUnit.DAYS).toEpochMilli());
-
-        // Used at 1 day ago
-        Date usedAt = new Date(now.toInstant().minus(1, ChronoUnit.DAYS).toEpochMilli());
+        Date expiredAt = createFutureDate(1, now);
+        Date createdAt = createPastDate(2, now);
+        Date usedAt = createPastDate(1, now);
 
         Stamp stamp = new Stamp(expiredAt, createdAt, usedAt);
-        assertFalse(stamp.isUsable());
+        boolean isUsable = stamp.isUsable();
+
+        assertFalse(isUsable);
     }
 
     @Test
     void givenNullUsedAt_isUsed_shouldReturnFalse() {
         Date now = new Date();
-
-        // Will be expired in 10 days
-        Date expiredAt = new Date(now.toInstant().plus(10, ChronoUnit.DAYS).toEpochMilli());
-
-        // Created at 2 days ago
-        Date createdAt = new Date(now.toInstant().minus(2, ChronoUnit.DAYS).toEpochMilli());
+        Date expiredAt = createFutureDate(1, now);
+        Date createdAt = createPastDate(1, now);
 
         Stamp stamp = new Stamp(expiredAt, createdAt);
-        assertFalse(stamp.isUsed());
+        boolean isUsed = stamp.isUsed();
+
+        assertFalse(isUsed);
     }
 
     @Test
     void givenNonNullUsedAt_isUsed_shouldReturnTrue() {
         Date now = new Date();
-
-        // Will be expired in 10 days
-        Date expiredAt = new Date(now.toInstant().plus(10, ChronoUnit.DAYS).toEpochMilli());
-
-        // Created at 2 days ago
-        Date createdAt = new Date(now.toInstant().minus(2, ChronoUnit.DAYS).toEpochMilli());
-
-        // Used at 1 day ago
-        Date usedAt = new Date(now.toInstant().minus(1, ChronoUnit.DAYS).toEpochMilli());
+        Date expiredAt = createFutureDate(1, now);
+        Date createdAt = createPastDate(2, now);
+        Date usedAt = createPastDate(1, now);
 
         Stamp stamp = new Stamp(expiredAt, createdAt, usedAt);
-        assertTrue(stamp.isUsed());
+        boolean isUsed = stamp.isUsed();
+
+        assertTrue(isUsed);
+    }
+
+    Date createPastDate(int daysPassed, Date dateSince) {
+        return new Date(dateSince.toInstant().minus(daysPassed, ChronoUnit.DAYS).toEpochMilli());
+    }
+
+    Date createFutureDate(int daysInFuture, Date dateSince) {
+        return new Date(dateSince.toInstant().plus(daysInFuture, ChronoUnit.DAYS).toEpochMilli());
     }
 }
