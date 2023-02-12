@@ -2,8 +2,7 @@ package com.mauntung.mauntung.domain.model.membership;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,28 +14,23 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointRulesTest {
-    static Integer redeemTtl = 1;
-    static Integer pointClaimableDuration = 1;
-    static Integer pointUsableDuration = 1;
-    static PointRules.DistributionMethod distributionMethod = PointRules.DistributionMethod.POINT_CODE_GENERATION;
-    static Set<PointRules.RewardClaimMethod> rewardClaimMethods = Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER);
-    static PointGeneration pointGeneration = new PointGeneration(PointGeneration.Type.NOMINAL, 10, 10_000);
-    static ObjectMapper jsonMapper = new ObjectMapper();
+    static Integer redeemTtl;
+    static Integer pointClaimableDuration;
+    static Integer pointUsableDuration;
+    static PointRules.DistributionMethod distributionMethod;
+    static Set<PointRules.RewardClaimMethod> rewardClaimMethods;
+    static PointGeneration pointGeneration;
+    static ObjectMapper jsonMapper;
 
-    static Stream<Arguments> invalidArgsProvider() {
-        return Stream.of(
-            Arguments.arguments(-1, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
-            Arguments.arguments(redeemTtl, -1, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
-            Arguments.arguments(redeemTtl, pointClaimableDuration, -1, distributionMethod, rewardClaimMethods, pointGeneration)
-        );
-    }
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        redeemTtl = 1;
+        pointClaimableDuration = 1;
+        pointUsableDuration = 1;
+        distributionMethod = PointRules.DistributionMethod.POINT_CODE_GENERATION;
+        rewardClaimMethods = Set.of(PointRules.RewardClaimMethod.BY_CUSTOMER);
+        pointGeneration = new PointGeneration(PointGeneration.Type.NOMINAL, 10, 10_000);
+        jsonMapper = new ObjectMapper();
     }
 
     @ParameterizedTest
@@ -84,5 +78,13 @@ class PointRulesTest {
     void whenWriteValueAsString_rewardClaimMethodEnum_shouldReturnToString() throws JsonProcessingException {
         assertEquals(String.format("\"%s\"", PointRules.RewardClaimMethod.BY_CUSTOMER), jsonMapper.writeValueAsString(PointRules.RewardClaimMethod.BY_CUSTOMER));
         assertEquals(String.format("\"%s\"", PointRules.RewardClaimMethod.BY_MERCHANT), jsonMapper.writeValueAsString(PointRules.RewardClaimMethod.BY_MERCHANT));
+    }
+
+    static Stream<Arguments> invalidArgsProvider() {
+        return Stream.of(
+            Arguments.arguments(-1, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
+            Arguments.arguments(redeemTtl, -1, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration),
+            Arguments.arguments(redeemTtl, pointClaimableDuration, -1, distributionMethod, rewardClaimMethods, pointGeneration)
+        );
     }
 }
