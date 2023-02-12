@@ -8,13 +8,10 @@ import com.mauntung.mauntung.domain.model.point.PointFactory;
 import com.mauntung.mauntung.domain.model.point.PointFactoryImpl;
 import com.mauntung.mauntung.domain.model.redeem.Redeem;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +20,7 @@ class CustomerPointMembershipTest {
     static PointFactory pointFactory;
     static CustomerPointMembershipFactory membershipFactory;
     static Date now;
-    static List<Point> points;
+    static Set<Point> points;
     static Set<Redeem> redeems;
     static Merchant merchant;
 
@@ -38,18 +35,9 @@ class CustomerPointMembershipTest {
         merchant = mock(Merchant.class);
         when(merchant.getName()).thenReturn("Merchant");
         when(merchant.getMembership()).thenReturn(pointMembership);
-    }
 
-    @BeforeEach
-    void beforeEach() {
         Date tenDaysAgo = new Date(now.toInstant().minus(10, ChronoUnit.DAYS).toEpochMilli());
         Date twoYearsAgo = new Date(now.toInstant().minus(730, ChronoUnit.DAYS).toEpochMilli());
-
-        Point usablePoint = mock(Point.class);
-        when(usablePoint.isUsable()).thenReturn(true);
-        when(usablePoint.getCurrentValue()).thenReturn(10);
-        when(usablePoint.getClaimedValue()).thenReturn(10);
-        when(usablePoint.getClaimedAt()).thenReturn(now);
 
         Point unusablePoint = mock(Point.class);
         when(unusablePoint.isUsable()).thenReturn(false);
@@ -63,15 +51,19 @@ class CustomerPointMembershipTest {
         when(twoYearsAgoPoint.getClaimedValue()).thenReturn(10);
         when(twoYearsAgoPoint.getClaimedAt()).thenReturn(twoYearsAgo);
 
-        points = List.of(
-            twoYearsAgoPoint,
-            unusablePoint,
-            usablePoint,
-            usablePoint,
-            usablePoint,
-            usablePoint,
-            usablePoint
-        );
+        points = new HashSet<>();
+        points.addAll(List.of(twoYearsAgoPoint, unusablePoint));
+
+        for (long i = 0; i < 5; i++) {
+            Point usablePoint = mock(Point.class);
+            when(usablePoint.getId()).thenReturn(i);
+            when(usablePoint.isUsable()).thenReturn(true);
+            when(usablePoint.getCurrentValue()).thenReturn(10);
+            when(usablePoint.getClaimedValue()).thenReturn(10);
+            when(usablePoint.getClaimedAt()).thenReturn(now);
+
+            points.add(usablePoint);
+        }
     }
 
     @Test

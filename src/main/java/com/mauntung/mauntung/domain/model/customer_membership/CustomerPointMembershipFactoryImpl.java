@@ -9,12 +9,11 @@ import com.mauntung.mauntung.domain.model.redeem.Redeem;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 public class CustomerPointMembershipFactoryImpl implements CustomerPointMembershipFactory {
     @Override
-    public CustomerPointMembershipBuilder builder(Merchant merchant, Date joinedAt, Set<Redeem> redeems, List<Point> points) {
+    public CustomerPointMembershipBuilder builder(Merchant merchant, Date joinedAt, Set<Redeem> redeems, Set<Point> points) {
         Membership membership = merchant.getMembership();
         if (!(membership instanceof PointMembership))
             throw new IllegalArgumentException("Invalid membership type. Merchant should has an membership with type of PointMembership");
@@ -28,7 +27,7 @@ public class CustomerPointMembershipFactoryImpl implements CustomerPointMembersh
         private final String merchantName;
         private final Date joinedAt;
         private final Set<Redeem> redeems;
-        private final List<Point> points;
+        private final Set<Point> points;
         private Set<Tier> tiers;
 
         @Override

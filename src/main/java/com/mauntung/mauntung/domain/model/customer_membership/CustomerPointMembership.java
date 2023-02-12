@@ -18,7 +18,7 @@ public class CustomerPointMembership implements CustomerMembership {
     @Getter private final Date joinedAt;
     @Getter private final String img;
     @Getter private final Set<Redeem> redeems;
-    private final List<Point> points;
+    private final Set<Point> points;
     @Getter private final Set<Tier> tiers;
 
     @Override
