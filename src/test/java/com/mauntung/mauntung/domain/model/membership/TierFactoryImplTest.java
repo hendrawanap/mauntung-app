@@ -1,10 +1,7 @@
 package com.mauntung.mauntung.domain.model.membership;
 
 import com.mauntung.mauntung.domain.model.reward.Reward;
-import com.mauntung.mauntung.domain.model.reward.RewardFactory;
-import com.mauntung.mauntung.domain.model.reward.RewardFactoryImpl;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -15,23 +12,21 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TierFactoryImplTest {
-    static final RewardFactory rewardFactory = new RewardFactoryImpl();
-    static final TierFactory tierFactory = new TierFactoryImpl();
+    static TierFactory tierFactory;
+    static Long id;
+    static String name;
+    static Set<Reward> rewards;
+    static int requiredPoints;
+    static float multiplierFactor;
 
-    static final Long id = 1L;
-    static final String name = "name";
-    static final Set<Reward> rewards = Set.of(
-        rewardFactory.builder("name", "description", "terms", 10).build()
-    );
-    static final int requiredPoints = 10;
-    static final float multiplierFactor = 1F;
-
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        tierFactory = new TierFactoryImpl();
+        id = 1L;
+        name = "name";
+        rewards = Set.of();
+        requiredPoints = 10;
+        multiplierFactor = 1F;
     }
 
     @ParameterizedTest
@@ -79,6 +74,7 @@ class TierFactoryImplTest {
         Tier tier = tierFactory.builder(name, rewards, requiredPoints)
             .id(id)
             .build();
+
         assertEquals(Tier.DEFAULT_MULTIPLIER_FACTOR, tier.getMultiplierFactor());
     }
 
