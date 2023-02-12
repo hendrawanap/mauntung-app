@@ -125,14 +125,14 @@ class CustomerPointMembershipTest {
     @Test
     void givenAmount30_deductBalance_shouldReturn3ChangedPoints() {
         CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
-        List<Point> changedPoints = membership.deductBalance(30);
+        Set<Point> changedPoints = membership.deductBalance(30);
         assertEquals(3, changedPoints.size());
     }
 
     @Test
     void givenAmount100_deductBalance_shouldReturnNull() {
         CustomerPointMembership membership = membershipFactory.builder(merchant, now, redeems, points).build();
-        List<Point> changedPoints = membership.deductBalance(100);
+        Set<Point> changedPoints = membership.deductBalance(100);
         assertNull(changedPoints);
     }
 }

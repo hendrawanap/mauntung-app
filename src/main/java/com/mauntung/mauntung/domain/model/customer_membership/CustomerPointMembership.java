@@ -62,7 +62,7 @@ public class CustomerPointMembership implements CustomerMembership {
         return currentTier;
     }
 
-    public List<Point> deductBalance(int amount) {
+    public Set<Point> deductBalance(int amount) {
         if (amount > getBalance()) return null;
 
         List<Point> usablePoints = points.stream()
@@ -70,7 +70,7 @@ public class CustomerPointMembership implements CustomerMembership {
             .sorted(Comparator.comparing(Point::getClaimedAt))
             .collect(Collectors.toList());
 
-        List<Point> usedPoints = new ArrayList<>();
+        Set<Point> usedPoints = new HashSet<>();
         int remaining = amount;
 
         for (Point point : usablePoints) {
