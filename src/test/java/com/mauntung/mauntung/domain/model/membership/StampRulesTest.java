@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.membership;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -10,16 +9,15 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StampRulesTest {
-    static final int redeemTtl = 10;
-    static final int usableDuration = 10;
-    static final int cardCapacity = 10;
+    static int redeemTtl = 10;
+    static int usableDuration = 10;
+    static int cardCapacity = 10;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        redeemTtl = 10;
+        usableDuration = 10;
+        cardCapacity = 10;
     }
 
     @ParameterizedTest
