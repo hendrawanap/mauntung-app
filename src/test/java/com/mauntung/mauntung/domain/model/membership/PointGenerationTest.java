@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.membership;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,16 +10,15 @@ import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointGenerationTest {
-    static final PointGeneration.Type type = PointGeneration.Type.NOMINAL;
-    static final int points = 10;
-    static final int divider = 10_000;
+    static PointGeneration.Type type;
+    static int points;
+    static int divider;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        type = PointGeneration.Type.NOMINAL;
+        points = 10;
+        divider = 10_000;
     }
 
     @Test
@@ -30,7 +28,7 @@ class PointGenerationTest {
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOnePoints_constructor_shouldThrow(int points) {
+    void givenLessThanOnePoint_constructor_shouldThrow(int points) {
         assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 
