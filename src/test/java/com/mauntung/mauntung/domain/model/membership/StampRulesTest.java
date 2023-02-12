@@ -24,31 +24,31 @@ class StampRulesTest {
 
     @ParameterizedTest
     @MethodSource("positiveIntegersStream")
-    void givenZeroOrPositiveRedeemTtl_constructor_shouldNotThrowsException(int redeemTtl) {
+    void givenZeroOrPositiveRedeemTtl_constructor_shouldNotThrow(int redeemTtl) {
         assertDoesNotThrow(() -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
     @ParameterizedTest
     @MethodSource("positiveIntegersStream")
-    void givenZeroOrPositiveUsableDuration_constructor_shouldNotThrowsException(int usableDuration) {
+    void givenZeroOrPositiveUsableDuration_constructor_shouldNotThrow(int usableDuration) {
         assertDoesNotThrow(() -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
     @ParameterizedTest
     @MethodSource("validCardCapacitiesProvider")
-    void givenValidCardCapacity_constructor_shouldNotThrowsException(int cardCapacity) {
+    void givenValidCardCapacity_constructor_shouldNotThrow(int cardCapacity) {
         assertDoesNotThrow(() -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneCardCapacity_constructor_shouldThrowsException(int cardCapacity) {
+    void givenLessThanOneCardCapacity_constructor_shouldThrow(int cardCapacity) {
         assertThrows(IllegalArgumentException.class, () -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 
     @ParameterizedTest
     @MethodSource("moreThanTwentyIntegersProvider")
-    void givenMoreThanTwentyCardCapacity_constructor_shouldThrowsException(int cardCapacity) {
+    void givenMoreThanTwentyCardCapacity_constructor_shouldThrow(int cardCapacity) {
         assertThrows(IllegalArgumentException.class, () -> new StampRules(redeemTtl, usableDuration, cardCapacity));
     }
 

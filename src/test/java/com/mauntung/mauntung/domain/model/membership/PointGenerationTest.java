@@ -24,19 +24,19 @@ class PointGenerationTest {
     }
 
     @Test
-    void givenCompleteArgs_constructor_shouldNotThrowsException() {
+    void givenCompleteArgs_constructor_shouldNotThrow() {
         assertDoesNotThrow(() -> new PointGeneration(type, points, divider));
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOnePoints_constructor_shouldThrowsException(int points) {
+    void givenLessThanOnePoints_constructor_shouldThrow(int points) {
         assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneDivider_constructor_shouldThrowsException(int divider) {
+    void givenLessThanOneDivider_constructor_shouldThrow(int divider) {
         assertThrows(IllegalArgumentException.class, () -> new PointGeneration(type, points, divider));
     }
 

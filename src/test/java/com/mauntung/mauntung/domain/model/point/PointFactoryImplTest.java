@@ -30,20 +30,20 @@ class PointFactoryImplTest {
     }
 
     @Test
-    void givenCompleteArgs_build_shouldNotThrowException() {
+    void givenCompleteArgs_build_shouldNotThrow() {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         assertDoesNotThrow(pointBuilder::build);
     }
 
     @Test
-    void givenNullClaimedValueAndNonNullCurrentValue_build_shouldThrowsException() {
+    void givenNullClaimedValueAndNonNullCurrentValue_build_shouldThrow() {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         pointBuilder.currentValue(baseValue);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
     @Test
-    void givenNullCurrentValueAndNonNullClaimedValue_build_shouldThrowsException() {
+    void givenNullCurrentValueAndNonNullClaimedValue_build_shouldThrow() {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
@@ -51,28 +51,28 @@ class PointFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneBaseValue_build_shouldThrowsException(int baseValue) {
+    void givenLessThanOneBaseValue_build_shouldThrow(int baseValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneBaseClaimableDuration_build_shouldThrowsException(int claimableDuration) {
+    void givenLessThanOneBaseClaimableDuration_build_shouldThrow(int claimableDuration) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneUsableDuration_build_shouldThrowsException(int usableDuration) {
+    void givenLessThanOneUsableDuration_build_shouldThrow(int usableDuration) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         assertThrows(IllegalArgumentException.class, pointBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("lessThanOneIntegersProvider")
-    void givenLessThanOneClaimedValue_build_shouldThrowsException(int claimedValue) {
+    void givenLessThanOneClaimedValue_build_shouldThrow(int claimedValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         pointBuilder.claimedValue(new ClaimedValue(claimedValue, createdAt));
         pointBuilder.currentValue(claimedValue);
@@ -81,7 +81,7 @@ class PointFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("negativeIntegersProvider")
-    void givenNegativeCurrentValue_build_shouldThrowsException(int currentValue) {
+    void givenNegativeCurrentValue_build_shouldThrow(int currentValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
         pointBuilder.currentValue(currentValue);
@@ -90,7 +90,7 @@ class PointFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersProvider")
-    void givenZeroOrPositiveCurrentValue_build_shouldNotThrowException(int currentValue) {
+    void givenZeroOrPositiveCurrentValue_build_shouldNotThrow(int currentValue) {
         PointBuilder pointBuilder = pointFactory.builder(baseValue, claimableDuration, usableDuration, createdAt, code);
         pointBuilder.claimedValue(new ClaimedValue(baseValue, createdAt));
         pointBuilder.currentValue(currentValue);

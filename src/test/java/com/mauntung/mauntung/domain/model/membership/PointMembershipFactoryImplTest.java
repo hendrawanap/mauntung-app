@@ -62,7 +62,7 @@ class PointMembershipFactoryImplTest {
     }
 
     @Test
-    void givenValidTiers_build_shouldNotThrowsException() {
+    void givenValidTiers_build_shouldNotThrow() {
         PointMembershipBuilder builder = membershipFactory.builder(name, rewards, createdAt, pointRules, false)
             .tiers(tiers);
         assertDoesNotThrow(builder::build);
@@ -70,7 +70,7 @@ class PointMembershipFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("invalidTiersProvider")
-    void givenInvalidTiers_build_shouldThrowsException(Set<Tier> tiers) {
+    void givenInvalidTiers_build_shouldThrow(Set<Tier> tiers) {
         PointMembershipBuilder builder = membershipFactory.builder(name, rewards, createdAt, pointRules, false)
             .tiers(tiers);
         assertThrows(IllegalArgumentException.class, builder::build);

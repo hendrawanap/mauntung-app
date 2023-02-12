@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class StampTest {
     @Test
-    void givenExpiredAtIsBeforeCreatedDate_new_shouldThrowsException() {
+    void givenExpiredAtIsBeforeCreatedDate_new_shouldThrow() {
         Date now = new Date();
         Date expiredAt = createPastDate(2, now);
         Date createdAt = createPastDate(1, now);
@@ -18,7 +18,7 @@ class StampTest {
     }
 
     @Test
-    void givenUsedDateIsAfterExpiredAt_new_shouldThrowsException() {
+    void givenUsedDateIsAfterExpiredAt_new_shouldThrow() {
         Date now = new Date();
         Date expiredAt = createPastDate(1, now);
         Date createdAt = createPastDate(2, now);
@@ -28,7 +28,7 @@ class StampTest {
     }
 
     @Test
-    void givenExpiredAtIsNotBeforeCreatedDate_new_shouldNotThrowException() {
+    void givenExpiredAtIsNotBeforeCreatedDate_new_shouldNotThrow() {
         Date now = new Date();
         Date expiredAt = createFutureDate(1, now);
         Date createdAt = createPastDate(1, now);
@@ -37,7 +37,7 @@ class StampTest {
     }
 
     @Test
-    void givenUsedDateIsNotAfterExpiredAt_new_shouldNotThrowException() {
+    void givenUsedDateIsNotAfterExpiredAt_new_shouldNotThrow() {
         Date now = new Date();
         Date expiredAt = createFutureDate(2, now);
         Date createdAt = createPastDate(1, now);

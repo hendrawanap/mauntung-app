@@ -25,14 +25,14 @@ class MerchantFactoryImplTest {
     }
 
     @Test
-    void givenCompleteArgs_build_ShouldNotThrowException() {
+    void givenCompleteArgs_build_shouldNotThrow() {
         MerchantBuilder merchantBuilder = merchantFactory.builder(name, createdAt);
         assertDoesNotThrow(merchantBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("malformedPhoneNumbersProvider")
-    void givenMalformedPhone_build_shouldThrowException(String malformedPhone) {
+    void givenMalformedPhone_build_shouldThrow(String malformedPhone) {
         MerchantBuilder merchantBuilder = merchantFactory.builder(name, createdAt);
         merchantBuilder.phone(malformedPhone);
         assertThrows(IllegalArgumentException.class, merchantBuilder::build);

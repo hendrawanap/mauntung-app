@@ -41,17 +41,17 @@ class PointRulesTest {
 
     @ParameterizedTest
     @MethodSource("invalidArgsProvider")
-    void givenInvalidArgs_constructor_shouldThrowsException(Integer redeemTtl, Integer pointClaimableDuration, Integer pointUsableDuration, PointRules.DistributionMethod distributionMethod, Set<PointRules.RewardClaimMethod> rewardClaimMethods, PointGeneration pointGeneration) {
+    void givenInvalidArgs_constructor_shouldThrow(Integer redeemTtl, Integer pointClaimableDuration, Integer pointUsableDuration, PointRules.DistributionMethod distributionMethod, Set<PointRules.RewardClaimMethod> rewardClaimMethods, PointGeneration pointGeneration) {
         assertThrows(IllegalArgumentException.class, () -> new PointRules(redeemTtl, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration));
     }
 
     @Test
-    void givenValidArgs_constructor_shouldNotThrowsException() {
+    void givenValidArgs_constructor_shouldNotThrow() {
         assertDoesNotThrow(() -> new PointRules(redeemTtl, pointClaimableDuration, pointUsableDuration, distributionMethod, rewardClaimMethods, pointGeneration));
     }
 
     @Test
-    void distributionMethodEnum_fromStringLabel_shouldNotThrowsException() {
+    void distributionMethodEnum_fromStringLabel_shouldNotThrow() {
         assertDoesNotThrow(() -> PointRules.DistributionMethod.fromStringLabel("generate"));
         assertDoesNotThrow(() -> PointRules.DistributionMethod.fromStringLabel("scan"));
     }
@@ -69,7 +69,7 @@ class PointRulesTest {
     }
 
     @Test
-    void rewardClaimMethodEnum_fromStringLabel_shouldNotThrowsException() {
+    void rewardClaimMethodEnum_fromStringLabel_shouldNotThrow() {
         assertDoesNotThrow(() -> PointRules.RewardClaimMethod.fromStringLabel("customer"));
         assertDoesNotThrow(() -> PointRules.RewardClaimMethod.fromStringLabel("merchant"));
     }

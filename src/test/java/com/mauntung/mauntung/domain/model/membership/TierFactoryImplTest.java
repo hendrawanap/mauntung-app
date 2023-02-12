@@ -36,7 +36,7 @@ class TierFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeRequiredPoints_build_shouldThrowsException(int wrongRequiredPoints) {
+    void givenNegativeRequiredPoints_build_shouldThrow(int wrongRequiredPoints) {
         assertThrows(IllegalArgumentException.class, () -> tierFactory.builder(name, rewards, wrongRequiredPoints)
             .multiplierFactor(multiplierFactor)
             .id(id)
@@ -46,7 +46,7 @@ class TierFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveRequiredPoints_build_shouldNotThrowsException(int correctRequiredPoints) {
+    void givenZeroOrPositiveRequiredPoints_build_shouldNotThrow(int correctRequiredPoints) {
         assertDoesNotThrow(() -> tierFactory.builder(name, rewards, correctRequiredPoints)
             .multiplierFactor(multiplierFactor)
             .id(id)
@@ -56,7 +56,7 @@ class TierFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeMultiplierFactor_build_shouldThrowsException(float wrongMultiplierFactor) {
+    void givenNegativeMultiplierFactor_build_shouldThrow(float wrongMultiplierFactor) {
         assertThrows(IllegalArgumentException.class, () -> tierFactory.builder(name, rewards, requiredPoints)
             .multiplierFactor(wrongMultiplierFactor)
             .id(id)
@@ -66,7 +66,7 @@ class TierFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveMultiplierFactor_build_shouldNotThrowsException(int correctMultiplierFactor) {
+    void givenZeroOrPositiveMultiplierFactor_build_shouldNotThrow(int correctMultiplierFactor) {
         assertDoesNotThrow(() -> tierFactory.builder(name, rewards, requiredPoints)
             .multiplierFactor((float) correctMultiplierFactor)
             .id(id)

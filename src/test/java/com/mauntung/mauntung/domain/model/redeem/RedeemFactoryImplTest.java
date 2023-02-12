@@ -43,13 +43,13 @@ class RedeemFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeCost_build_shouldThrowsException(int cost) {
+    void givenNegativeCost_build_shouldThrow(int cost) {
         RedeemBuilder redeemBuilder = redeemFactory.builder(name, description, termsCondition, cost, code, reward, createdAt, expiredAt);
         assertThrows(IllegalArgumentException.class, redeemBuilder::build);
     }
 
     @Test
-    void givenCompleteArgs_build_shouldNotThrowException() {
+    void givenCompleteArgs_build_shouldNotThrow() {
         RedeemBuilder redeemBuilder = redeemFactory.builder(name, description, termsCondition, cost, code, reward, createdAt, expiredAt);
         assertDoesNotThrow(redeemBuilder::build);
     }

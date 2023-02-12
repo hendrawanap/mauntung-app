@@ -32,21 +32,21 @@ class RewardFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveCost_build_shouldNotThrowException(int correctCost) {
+    void givenZeroOrPositiveCost_build_shouldNotThrow(int correctCost) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         assertDoesNotThrow(rewardBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeCost_build_shouldThrowsException(int wrongCost) {
+    void givenNegativeCost_build_shouldThrow(int wrongCost) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, wrongCost);
         assertThrows(IllegalArgumentException.class, rewardBuilder::build);
     }
 
     @ParameterizedTest
     @MethodSource("zeroOrPositiveIntegersStream")
-    void givenZeroOrPositiveStock_build_shouldNotThrowException(int correctStock) {
+    void givenZeroOrPositiveStock_build_shouldNotThrow(int correctStock) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.stock(correctStock);
 
@@ -55,7 +55,7 @@ class RewardFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("negativeIntegersStream")
-    void givenNegativeStock_build_shouldThrowsException(int wrongStock) {
+    void givenNegativeStock_build_shouldThrow(int wrongStock) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.stock(wrongStock);
 
@@ -64,7 +64,7 @@ class RewardFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("invalidPeriodArgs")
-    void givenInvalidPeriodArgs_build_shouldThrowsException(Date startPeriod, Date endPeriod) {
+    void givenInvalidPeriodArgs_build_shouldThrow(Date startPeriod, Date endPeriod) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.startPeriod(startPeriod);
         rewardBuilder.endPeriod(endPeriod);
@@ -74,7 +74,7 @@ class RewardFactoryImplTest {
 
     @ParameterizedTest
     @MethodSource("validPeriodArgs")
-    void givenValidPeriodArgs_build_shouldNotThrowException(Date startPeriod, Date endPeriod) {
+    void givenValidPeriodArgs_build_shouldNotThrow(Date startPeriod, Date endPeriod) {
         RewardBuilder rewardBuilder = rewardFactory.builder(name, description, termsCondition, correctCost);
         rewardBuilder.startPeriod(startPeriod);
         rewardBuilder.endPeriod(endPeriod);
