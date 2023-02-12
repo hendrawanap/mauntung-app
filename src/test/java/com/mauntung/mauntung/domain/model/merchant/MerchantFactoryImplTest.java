@@ -1,7 +1,6 @@
 package com.mauntung.mauntung.domain.model.merchant;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -12,16 +11,15 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MerchantFactoryImplTest {
-    MerchantFactory merchantFactory = new MerchantFactoryImpl();
-    static String name = "name";
-    static Date createdAt = new Date();
+    static MerchantFactory merchantFactory;
+    static String name;
+    static Date createdAt;
 
-    @BeforeEach
-    void setUp() {
-    }
-
-    @AfterEach
-    void tearDown() {
+    @BeforeAll
+    static void beforeAll() {
+        merchantFactory = new MerchantFactoryImpl();
+        name = "name";
+        createdAt = new Date();
     }
 
     @Test
